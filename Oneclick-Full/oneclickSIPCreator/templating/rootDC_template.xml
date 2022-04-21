@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simpledc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <title>{{rootuuid4}} DC Metadata</title>
+   <identifier>dc.xml</identifier>
+   <creator>{{dc_creator}}</creator>
+   <date>{{dc_date}}</date>
+   <description>{{dc_description}}</description>
+   <publisher>{{dc_publisher}}</publisher>
+   <contributor>{{dc_contributor}}</contributor>
+   <rights>{{dc_rights}}</rights>
+   <language>{{dc_language}}</language>
+   <coverage>{{dc_coverage}}</coverage>
+   <format>{{dc_format}}</format>
+   <relation>{{dc_relation}}</relation>
+   <subject>{{dc_subject}}</subject>
+   <type>{{Content_Type}}</type>
+   <source>{{dc_source}}</source>
+<additional>{{dc_additional}}</additional>
+
+</simpledc>

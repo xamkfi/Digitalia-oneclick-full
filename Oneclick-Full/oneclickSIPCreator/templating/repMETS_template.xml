@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.loc.gov/METS/"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:sip="https://DILCIS.eu/XML/METS/SIPExtensionMETS"
+    xmlns:csip="https://DILCIS.eu/XML/METS/CSIPExtensionMETS"
+    OBJID="{{repuuid4}}" 
+    LABEL="" 
+    TYPE="Mixed" 
+    csip:CONTENTINFORMATIONTYPE="MIXED" 
+    PROFILE="https://earkcsip.dilcis.eu/profile/E-ARK-CSIP.xml"
+    xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd
+       http://www.w3.org/1999/xlink http://www.loc.gov/standards/mets/xlink.xsd
+       https://DILCIS.eu/XML/METS/CSIPExtensionMETS https://earkcsip.dilcis.eu/schema/DILCISExtensionMETS.xsd
+       https://dilcis.eu/XML/METS/SIPExtensionMETS">
+
+<metsHdr CREATEDATE="{{creationDate}}" RECORDSTATUS="NEW" csip:OAISPACKAGETYPE="SIP">
+<agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="SOFTWARE">
+<name>Oneclick eArchiving - Digitalia</name>
+</agent>
+<metsDocumentID>repMETS.xml</metsDocumentID>
+</metsHdr>
+<amdSec ID="amdSec"/>
+<fileSec ID="repmetsfileSec">
+	<fileGrp ID="repmetsfileSecGrp" USE="Data">
+		{{generateRepMetsFileSection}}		
+	</fileGrp>
+</fileSec>
+
+<structMap LABEL="CSIP" TYPE="PHYSICAL" ID="repmetsstructMap">
+	<div LABEL="{{rootuuid4}}" ID="repmetsstructMapDiv">
+		<div LABEL="data" ID="repmetsstructMapDivData">
+			{{getRepMetsStructMapSection}}
+			<!--Originals left for reference
+			<fptr FILEID="ID718967ae-8265-471e-a17d-76297bcc8973"/>
+			<fptr FILEID="ID87b893b2-aaaa-4dc2-be41-a0dce4092221"/>
+			-->
+		</div>
+	</div>
+</structMap>
+</mets>

@@ -1,0 +1,4 @@
+<file ID="ID-{{fileID}}" MIMETYPE="{{File_MIMEType}}" CHECKSUMTYPE="SHA-256" 
+CREATED="{{File_FileModifyDate}}" CHECKSUM="{{sha256}}" USE="Datafile" SIZE="{{File_FileSize}}">
+<FLocat xlink:href="{{relativePath}}" LOCTYPE="URL" xlink:type="simple"/>
+</file>

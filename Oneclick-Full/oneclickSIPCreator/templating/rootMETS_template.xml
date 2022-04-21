@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.loc.gov/METS/"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:sip="https://DILCIS.eu/XML/METS/SIPExtensionMETS"
+    xmlns:csip="https://DILCIS.eu/XML/METS/CSIPExtensionMETS"
+    OBJID="{{rootuuid4}}"
+  	LABEL="" 
+  	TYPE="Mixed"    
+  	csip:CONTENTINFORMATIONTYPE="MIXED"
+    PROFILE="https://earkcsip.dilcis.eu/profile/E-ARK-CSIP.xml"
+    xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd
+       http://www.w3.org/1999/xlink http://www.loc.gov/standards/mets/xlink.xsd https://dilcis.eu/XML/METS/SIPExtensionMETS
+       https://DILCIS.eu/XML/METS/CSIPExtensionMETS https://earkcsip.dilcis.eu/schema/DILCISExtensionMETS.xsd">
+  
+  
+	<metsHdr CREATEDATE="{{creationDate}}" LASTMODDATE="{{modificationDate}}" RECORDSTATUS="NEW" csip:OAISPACKAGETYPE="SIP">
+        <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="SOFTWARE">
+            <name>Oneclick eArchiving - Digitalia </name>
+            <note csip:NOTETYPE="SOFTWARE VERSION">0.0.4-dev</note> 
+        </agent>
+        <agent ROLE="CREATOR" TYPE="INDIVIDUAL">
+            <name>AJ</name>
+            <note csip:NOTETYPE="IDENTIFICATIONCODE">1234567</note>
+        </agent>
+    </metsHdr>
+    <dmdSec ID="dmdSec" CREATED="{{creationDate}}" STATUS="CURRENT">
+        <mdRef ID="DC.xml" LOCTYPE="URL" MDTYPE="DC" MDTYPEVERSION="SimpleDC20021212" xlink:type="simple" xlink:href="metadata/descriptive/DC.xml" MIMETYPE="{{dc_File_MIMEType}}" SIZE="{{dc_File_FileSize}}" CREATED="{{dc_File_FileModifyDate}}" CHECKSUM="{{dc_sha256}}" CHECKSUMTYPE="SHA-256"/>
+    </dmdSec>    
+    <fileSec ID="fileSec">		
+		<fileGrp ID="fileSecfileRepGrp" USE="Representations/{{repuuid4}}">
+			<file ID="repmetsxmlfile" MIMETYPE="text/xml" SIZE="{{repmets_File_FileSize}}" CREATED="{{repmets_File_FileModifyDate}}" CHECKSUM="{{repmets_sha256}}" CHECKSUMTYPE="SHA-256">
+                <FLocat xlink:type="simple" xlink:href="representations/{{repuuid4}}/METS.xml" LOCTYPE="URL"/>
+            </file>
+		</fileGrp>		
+	</fileSec>        
+    
+    <structMap LABEL="CSIP" TYPE="PHYSICAL" ID="structMap">
+		<div LABEL="{{rootuuid4}}" ID="structMapMainDiv">			
+			<div ID="structMapMetaSec" DMDID="dmdSec" LABEL="Metadata"/>            
+            <div ID="structMapRepSec" LABEL="Representations/{{repuuid4}}">
+                <mptr xlink:type="simple" xlink:href="representations/{{repuuid4}}/METS.xml" xlink:title="fileSecfileRepGrp" LOCTYPE="URL"/>
+            </div>	
+		</div>
+	</structMap>
+</mets>
