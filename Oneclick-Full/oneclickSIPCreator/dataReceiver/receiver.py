@@ -33,16 +33,18 @@ metsDCValues = ['Content-Length', 'sha256' ]
 deletePath = True
 includeSchemas = False
 
-runtimeDir = "/home/digitalia-aj/extraspace/runtimefiles/"
+#runtimeDir = "notdefined"
 csversion = "2.0.1"
 
 """
 Creates the basic SIP folder structure, metadata, representations, datauuid and data folder
 return the paths (root and datapath) in a list
 """
-def createBasicSIPDirStructure(rootUUIDDir, repUUIDDir):
+def createBasicSIPDirStructure(pathname, rootUUIDDir, repUUIDDir):
     returnDict = {}
-    basePath = os.path.join(os.path.dirname(runtimeDir), str(rootUUIDDir))
+    print("Runtime dir before basepath creation {}".format(pathname))
+    basePath = os.path.join(os.path.dirname(pathname), str(rootUUIDDir))
+    print("and basepath is {}".format(basePath))
     returnDict['basePath']=basePath
     metaPath = os.path.join(basePath, "metadata")
     returnDict['metaPath']=metaPath    
@@ -193,7 +195,9 @@ def handleCreationEvent(event, storage):
     repMets = {}
     rootDC = {}    
     pathname = event.src_path 
-    #print(pathname)
+    print("event path = {}".format(pathname))
+    #runtimeDir = storage.getConfigItem("uploaddir")
+    #print("Using runtime directory {}".format(runtimeDir))
     #stats = os.stat(pathname)
     
     """These are mandatory elements to ensure upload is completed before the processing starts
@@ -246,7 +250,7 @@ def handleCreationEvent(event, storage):
             rootDC.update({'rootuuid4':rootuuid4})
             repuuid4 = uuidCreator.getuuid4() ##UUID for the representation directory
             rootMets.update({'repuuid4':repuuid4})
-            SIPPathNames = createBasicSIPDirStructure(rootuuid4, repuuid4)
+            SIPPathNames = createBasicSIPDirStructure(pathname, rootuuid4, repuuid4)
             """After creation SIPPathNames contains, need to add schema and documentation paths also
             basePath, metaPath, metaDescPath, 
             repPath, repuuidPath, dataPath 
@@ -352,7 +356,7 @@ def handleCreationEvent(event, storage):
             
             #Cleans empty dirs
             cleanEmptyDirs(SIPPathNames['basePath'])
-            
+            print("Basepath before zipping = {}".format(SIPPathNames['basePath']))
             zipPath = createZIPfromSIP(SIPPathNames['basePath'], rootuuid4)
             print("SIP file in {}".format(zipPath))
             if os.path.isfile(zipPath) and deletePath:

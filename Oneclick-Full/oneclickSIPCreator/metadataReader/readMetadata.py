@@ -3,7 +3,7 @@ Created on Oct 19, 2021
 
 @author: digitalia-aj
 '''
-import exiftool
+from  exiftool import ExifToolHelper
 import hashlib
 import json
 import os
@@ -15,7 +15,7 @@ import mimetypes
 from multiprocessing import Pool
 from IDCreator import shaCalculator, uuidCreator
 from dataReceiver import receiver
-from exiftool.exiftool import ExifTool
+#from exiftool.ExifToolHelper import 
 
 class readMeta:
     def __init__(self):
@@ -34,8 +34,8 @@ class readMeta:
     
     def useExifToReadMeta(self, onePath):
         #print("Get metadata with exiftool for {} ".format(onePath))
-        with ExifTool() as et:
-            tempDict = et.get_metadata(onePath)
+        with ExifToolHelper() as et:
+            tempDict = et.get_metadata(onePath)[0]
         #print("Exifmeta is {}".format(tempDict))
         
         return tempDict
@@ -74,7 +74,7 @@ class readMeta:
         metaDict['fileID'] = fileid
         #This part adds the last modified time to metadata thus Tika seems to be unable to get that info
         metaDict['relativePath'] = str(relPath)
-        #print("After -->{}".format(metaDict))
+        print("After -->{}".format(metaDict))
         
         if 'ExifTool_Error' in metaDict:
             #print("Exiftool error {}".format(onePath))
