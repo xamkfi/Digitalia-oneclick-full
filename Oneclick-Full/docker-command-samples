@@ -1,0 +1,14 @@
+Perusbuildi:
+docker build -t oneclick .
+
+Aja ja näytä 80 portti: 
+docker run -d -p 80:80 oneclick
+
+näytä ajossa olevat prosessit: 
+docker ps
+
+bash sharp_snyder nimisessä dockerissa: 
+docker exec -ti sharp_snyder bash
+
+lopeta goofy_ptolemy 
+docker stop goofy_ptolemy 
