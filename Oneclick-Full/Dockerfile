@@ -18,13 +18,15 @@ RUN sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /
 RUN apt-get -y update 
 RUN apt-get -y upgrade
 #Installs exiftool, apache and php --> cleans unneeded
-RUN apt-get install -y exiftool php8.1 apache2
+RUN apt-get install -y exiftool php8.1 apache2 clamav clamav-daemon
+COPY docker-apache.conf /etc/apache2/conf-enabled/docker-apache.conf
 
 #Installs nano for development purposes, will be removed on final release
-#RUN apt-get install nano
+RUN apt-get install nano
 
 #Exposes basic ports
 EXPOSE 80
+
 
 
 COPY phpinfo.php /var/www/html
@@ -32,6 +34,7 @@ COPY uploads.ini /etc/php/8.1/apache2/conf.d
 COPY oneclickUploader /var/www/html/oneclickUploader
 #Needed to be able to move the uploaded files to a uploads folder
 RUN chown -R www-data:www-data /var/www/html/oneclickUploader
+RUN service apache2 restart
 
 COPY ./oneclickSIPCreator /app/oneclickSIPCreator/.
 
