@@ -18,7 +18,8 @@ RUN sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /
 RUN apt-get -y update 
 RUN apt-get -y upgrade
 #Installs exiftool, apache and php --> cleans unneeded
-RUN apt-get install -y exiftool php8.1 apache2 clamav clamav-daemon
+RUN apt-get install -y exiftool php8.1 apache2 clamav clamav-daemon default-jre-headless
+RUN freshclam
 COPY docker-apache.conf /etc/apache2/conf-enabled/docker-apache.conf
 
 #Installs nano for development purposes, will be removed on final release
