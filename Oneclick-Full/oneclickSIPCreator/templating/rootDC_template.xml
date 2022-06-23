@@ -15,6 +15,5 @@
    <subject>{{dc_subject}}</subject>
    <type>{{Content_Type}}</type>
    <source>{{dc_source}}</source>
-<additional>{{dc_additional}}</additional>
 
 </simpledc>

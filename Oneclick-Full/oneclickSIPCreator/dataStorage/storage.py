@@ -10,6 +10,7 @@ class dataStorage:
     def __init__(self):
         self.Config = {}
         self.PayloadMetadataDict = {}
+        self.Cookies = {}
 
     def storeConfig(self, content):
         self.Config = content
@@ -39,6 +40,13 @@ class dataStorage:
     def getPayloadMetadata(self, rootuuid4):
         print("Getting file metadata for SIP id {}".format(rootuuid4))
         return self.PayloadMetadataDict[rootuuid4]
+    
+    def storeSessionCookie(self, cookie, rootuuid4):
+        print("Storing cookie {} to rootuuid {}".format(cookie,rootuuid4))
+        self.Cookies[rootuuid4] = cookie
         
+    def getSessionCookie(self, rootuuid4):
+        print("Getting session cookie for SIP id {}".format(rootuuid4))
+        return self.Cookies[rootuuid4]
     
     

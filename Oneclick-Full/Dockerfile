@@ -2,7 +2,7 @@
 FROM continuumio/anaconda3
 
 #Expose ports
-EXPOSE 3000
+#EXPOSE 3000
 
 WORKDIR /app
 #Basic update for the system
@@ -19,13 +19,12 @@ RUN apt-get -y update
 RUN apt-get -y upgrade
 #Installs exiftool, apache and php --> cleans unneeded
 RUN apt-get install -y exiftool php8.1 apache2 clamav clamav-daemon default-jre-headless
-RUN freshclam
 COPY docker-apache.conf /etc/apache2/conf-enabled/docker-apache.conf
 
 #Installs nano for development purposes, will be removed on final release
 RUN apt-get install nano
 
-#Exposes basic ports
+#Exposes the basic ports
 EXPOSE 80
 
 
@@ -33,14 +32,19 @@ EXPOSE 80
 COPY phpinfo.php /var/www/html
 COPY uploads.ini /etc/php/8.1/apache2/conf.d
 COPY oneclickUploader /var/www/html/oneclickUploader
+COPY ./oneclickSIPCreator/config.ini /var/www/html/oneclickUploader
 #Needed to be able to move the uploaded files to a uploads folder
 RUN chown -R www-data:www-data /var/www/html/oneclickUploader
 RUN service apache2 restart
 
 COPY ./oneclickSIPCreator /app/oneclickSIPCreator/.
 
+#UPdates clamav disabled for development
+#RUN freshclam
+
 #Updates conda environment and adds needed libraries
 #RUN conda update --all
+
 RUN conda install -c conda-forge watchdog python-magic langdetect
 RUN conda install -c anaconda beautifulsoup4
 RUN pip install -U PyExifTool

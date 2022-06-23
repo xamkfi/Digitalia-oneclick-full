@@ -74,7 +74,7 @@ class readMeta:
         metaDict['fileID'] = fileid
         #This part adds the last modified time to metadata thus Tika seems to be unable to get that info
         metaDict['relativePath'] = str(relPath)
-        print("After -->{}".format(metaDict))
+        #print("After -->{}".format(metaDict))
         
         if 'ExifTool_Error' in metaDict:
             #print("Exiftool error {}".format(onePath))

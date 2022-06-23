@@ -1,14 +1,24 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+	
+// Read a file into an array
+$lines = file('config.ini');
+
+// Loop through the array
+foreach ($lines as $line) {
+	
+	if(str_starts_with($line, "uploaddir"))	{
+    $polku = substr($line, 13);
+
+	}
+}
     
 $uploadedFiles = array();
-
+$uploadersession = $_POST["uploadid"]."/";
     $countfiles = count($_FILES['file']['name']);
     for($i=0;$i<$countfiles;$i++){
         $filename = basename($_FILES['file']['name'][$i]);
-		//console.log($filename);
-        $path = "uploads/".pathinfo($_FILES['file']['full_path'][$i], PATHINFO_DIRNAME);
-        //console.log($path);
+		$path = trim($polku)."/".$uploadersession.pathinfo($_FILES['file']['full_path'][$i], PATHINFO_DIRNAME);
 		if (!file_exists($path)) {
 			mkdir($path, 0777, true);
 		}

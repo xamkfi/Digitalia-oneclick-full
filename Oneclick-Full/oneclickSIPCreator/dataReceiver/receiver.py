@@ -42,9 +42,10 @@ return the paths (root and datapath) in a list
 """
 def createBasicSIPDirStructure(pathname, rootUUIDDir, repUUIDDir):
     returnDict = {}
-    print("Runtime dir before basepath creation {}".format(pathname))
-    basePath = os.path.join(os.path.dirname(pathname), str(rootUUIDDir))
-    print("and basepath is {}".format(basePath))
+    print("Upload dir before basepath creation {}".format(pathname))
+    #basePath = os.path.join(os.path.dirname(pathname), str(rootUUIDDir))
+    basePath = os.path.join("/tmp/runtimeProcessing", str(rootUUIDDir))
+    print("and runtime basepath is {}".format(basePath))
     returnDict['basePath']=basePath
     metaPath = os.path.join(basePath, "metadata")
     returnDict['metaPath']=metaPath    
@@ -65,7 +66,7 @@ def createBasicSIPDirStructure(pathname, rootUUIDDir, repUUIDDir):
     returnDict['repOrgMetaPath']=repOrgMetaPath
     
     if not (os.path.exists(basePath)):
-        os.mkdir(basePath)
+        os.makedirs(basePath)
         print("created base SIP path {}".format(basePath))
     if (os.path.exists(basePath)):
         os.mkdir(metaPath)
@@ -86,7 +87,7 @@ def getCurrentTime():
    
 
 def moveFilesToNewDir(originalPath, newPath):    
-    #print(extradir)
+    print("Move from {} to {}".format(originalPath, newPath))
     shutil.move(originalPath, newPath)
     fullpath = os.path.join(newPath, os.path.basename(originalPath))
     return fullpath
@@ -109,19 +110,22 @@ def parseXMLData(xmldatafile):
         
     return retData
 
-def handleFile(pathname):
+def handleFile(pathname, repOrgMetaPath, storage):
     allFiles = []
     print("It's a file with path {}".format(pathname))
+    """
     mimetype = getMimeType(pathname)
     #print(mimetype)        
+    
     if (mimetype=="application/x-xz"):                
-        allFiles = handleDir(dataExtractor.extractTarGz(pathname))
+        allFiles = handleDir(dataExtractor.extractTarGz(pathname),repOrgMetaPath, storage)
     if (mimetype=="application/zip"):
-        allFiles = handleDir(dataExtractor.extractZip(pathname))    
+        allFiles = handleDir(dataExtractor.extractZip(pathname),repOrgMetaPath, storage)    
     if (mimetype=="application/x-gzip"): ##works for tar.gz but not plain gz files
-        allFiles = handleDir(dataExtractor.extractTarGz(pathname))
+        allFiles = handleDir(dataExtractor.extractTarGz(pathname),repOrgMetaPath, storage)
     else:
-        allFiles.append(pathname)    
+    """
+    allFiles.append(pathname)    
     #if (mimetype=="application/x-7z-compressed"):
     
     return allFiles
@@ -135,14 +139,17 @@ def getdirSize(pathname):
     dirsize = subprocess.check_output(['du','-sb', pathname]).split()[0].decode('utf-8')
     return dirsize
 
-def createZIPfromFiles(filelist, sipname, basePath):
+def createZIPfromFiles(filelist, sipname, finalZipLocation):
     print("Zipping {}".format(filelist))
-    zipPath = os.path.join(basePath, sipname+"+validation-report.zip")
+    #Checks that the finalZipPath directory exists, if not creates it
+    if not os.path.isdir(finalZipLocation):
+        print("Creating final zip directory {}".format(finalZipLocation))
+        os.mkdir(finalZipLocation)
+    zipPath = os.path.join(finalZipLocation, sipname+"+validation-report.zip")
     print(zipPath)
     with zipfile.ZipFile(zipPath, 'w') as zipper:
         for file in filelist:
-            zipper.write(file, os.path.basename(file))
-    
+            zipper.write(file, os.path.basename(file))    
     return zipPath
 
 def createZIPfromSIP(basePath, baseName):
@@ -196,6 +203,7 @@ def handleCreationEvent(event, storage):
     rootDC = {}    
     pathname = event.src_path 
     print("event path = {}".format(pathname))
+    
     #runtimeDir = storage.getConfigItem("uploaddir")
     #print("Using runtime directory {}".format(runtimeDir))
     #stats = os.stat(pathname)
@@ -212,6 +220,8 @@ def handleCreationEvent(event, storage):
                 
     elif(event.is_directory): #It is a folder, check it's size changes
         historicalSize = -1        
+        #Gets the php created "sessioncookie" folder name
+        cookie = os.path.basename(pathname) #Stored after rootuuid4 is generated below
         while historicalSize != getdirSize(pathname):
             time.sleep(2) 
             historicalSize = getdirSize(pathname)
@@ -244,8 +254,11 @@ def handleCreationEvent(event, storage):
             #Calls a method that checks and fixes invalid filenames
             pathname = checkAndFixFileNames(pathname)
             
-            
             rootuuid4 = uuidCreator.getuuid4() #UUID for the whole sip
+            
+            if(event.is_directory):
+                storage.storeSessionCookie(cookie, rootuuid4) #Cookie is stored on only in case 
+            
             rootMets.update({'rootuuid4':rootuuid4})
             rootDC.update({'rootuuid4':rootuuid4})
             repuuid4 = uuidCreator.getuuid4() ##UUID for the representation directory
@@ -272,7 +285,7 @@ def handleCreationEvent(event, storage):
             print("Given path does not exists, nothing to do, quitting..")
         
         if (event.is_directory==False):
-            allFiles = handleFile(pathname)        
+            allFiles = handleFile(pathname, SIPPathNames['repOrgMetaPath'], storage)        
         elif(event.is_directory):
             payloadAndMetaPaths = handleDir(pathname, SIPPathNames['repOrgMetaPath'], storage)
             allFiles = payloadAndMetaPaths[0]
@@ -329,7 +342,7 @@ def handleCreationEvent(event, storage):
             
             
             #Write root DC.xml file
-            print("Content of rootDC meta is {}".format(rootDC))
+            #print("Content of rootDC meta is {}".format(rootDC))
             rootDC_xml = xmlTemplating.createRootDC(rootDC)
             rootDC_file = os.path.join(SIPPathNames['metaDescPath'],'DC.xml')
             rootDC_writer = open(rootDC_file, 'w+')
@@ -356,7 +369,7 @@ def handleCreationEvent(event, storage):
             
             #Cleans empty dirs
             cleanEmptyDirs(SIPPathNames['basePath'])
-            print("Basepath before zipping = {}".format(SIPPathNames['basePath']))
+            #print("Basepath before zipping = {}".format(SIPPathNames['basePath']))
             zipPath = createZIPfromSIP(SIPPathNames['basePath'], rootuuid4)
             print("SIP file in {}".format(zipPath))
             if os.path.isfile(zipPath) and deletePath:
@@ -374,7 +387,17 @@ def handleCreationEvent(event, storage):
                     if validationResult=="VALID":
                         print("SIP succesfully validated against commons-ip version {}".format(csversion))
                         zipFiles=[zipPath, validateReportPath]
-                        createZIPfromFiles(zipFiles, str(rootuuid4), storage.getConfigItem("completeddir"))
+                        if(event.is_directory):
+                            finalPath = os.path.join(storage.getConfigItem("completeddir"), storage.getSessionCookie(rootuuid4))
+                        else:
+                            finalPath = storage.getConfigItem("completeddir")
+                        print("Final Path with session cookie {}".format(finalPath))
+                        
+                        finalZipFile = createZIPfromFiles(zipFiles, str(rootuuid4), finalPath)
+                        
+                        if os.path.isfile(finalZipFile) and deletePath:
+                            for onefile in zipFiles:
+                                os.remove(onefile)
                     
                 except OSError as err:
                     print("OS error, {}".format(err))

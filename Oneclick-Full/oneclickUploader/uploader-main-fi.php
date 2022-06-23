@@ -1,3 +1,8 @@
+<?php
+session_start();
+$upload_id = session_id();
+$_SESSION["upload_id"] = hash("md5",$upload_id);
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,7 +11,7 @@
 
 include "appInfo.php";
 
-echo $appName." v".$appVersion;
+echo $appName." ".$appVersion;
 
 ?>
 </title>
@@ -39,12 +44,30 @@ echo $appName." v".$appVersion;
   </ul>
 </nav>
 <div class="container p-3 my-3 bg-dark text-white">
-    <h2><?php echo $appName." v".$appVersion; ?></h2>
-    <div class="custom-file">
-		<input type="file" name="file[]" class="custom-file-input" id="file[]" webkitdirectory multiple>
-		<label class="custom-file-label" for="file_to_upload">Valitse kansio</label>
+
+<!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" data-toggle="tab" href="#folder-upload-tab">Lähetä kansio</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="tab" href="#files-upload-tab">Lähetä tiedostoja</a>
+    </li>
+  </ul>
+  <form id="main-form">
+<div class="tab-content">
+    
+    
+	
+	<div id="folder-upload-tab" class="container tab-pane active"><br>
+	<h3>Valitse kansio:</h3>
+    <div class="custom-file" style="height:100%;color:black;text-align:center;border:2px solid white;">
+		<input type="file" name="file[]" class="custom-file-input" id="file[]" webkitdirectory multiple style="padding:200px;">
+		<label class="custom-file-label" for="file_to_upload">Selaa kansioita tai pudota alle:</label>
 	</div>
-    <h3>Tai pudota kansio alle:</h3>
+	 </div>
+	 <div id="files-upload-tab" class="container tab-pane fade"><br>
+    <h3>Pudota tiedostoja tähän</h3>
 	
     <div id="drop_zone"  onmouseenter="highlightSelection('animationid')" onmouseleave="resetSelection('animationid')">
         <!--*DROP HERE*-->
@@ -52,17 +75,36 @@ echo $appName." v".$appVersion;
 			<i class="fa fa-cloud-upload fa-5x"></i>
 		</div>
     </div>
+	</div>
     <hr>
     <p id="file_name"></p>
-	<input type="button" class="btn btn-primary" value="Lataa" id="upload_file_button">
-    <progress id="progress_bar" value="0" max="100" style="width:400px;"></progress>	
-    <p id="progress_status"></p>    
+	<div class="alert alert-warning" id="nofolder" style="display:none;">
+    Ei valittuja tiedostoja.
+  </div>
+  <div class="row">
+  <div class="col-sm-2">
+	<input type="button" class="btn btn-primary" value="Upload" id="upload_file_button">
+	</div>
+	<div class="col-sm-10">
+    <!--<progress id="progress_bar" value="0" max="100" style="width:400px;"></progress> -->
+ <div class="progress" style="height:30px;">
+  <div id="progress-bar" class="progress-bar bg-light" style="height:30px;color:black;width:100%;">Ei siirtoja käynnissä</div>
 </div>
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom justify-content-center">
+</div>
+</div> 	
+    <p id="progress_status"></p>
+	<p id="download_link"></p>
+   
+</div>
+</form> 
+</div>
+<div class="container p-4 my-4" style="padding-bottom: 200px;">
+</div>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-center fixed-bottom">
             <!-- Links -->
             <ul class="navbar-nav">
 			<li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-copyright">&nbsp;</i></a>
+                <a class="nav-link disabled" href="#"><i class="fa fa-copyright">&nbsp;</i></a>
               </li>
 			<?php $partnersLength = count($partners); 
 					for($partnersLkm=0;$partnersLkm<$partnersLength;$partnersLkm++)
@@ -80,52 +122,86 @@ echo $appName." v".$appVersion;
         </nav> 
     <script>
         document.getElementById('file[]').addEventListener('change', (event) => {
-            window.selectedFile = event.target.files;
-            document.getElementById('file_name').innerHTML = "File selected: " + window.selectedFile.name;
+			window.selectedFile = event.target.files;			
+            document.getElementById('file_name').innerHTML =  "Tiedostoja valittu: " + window.selectedFile.length + "<br>";
+			
         });
 
         document.getElementById('upload_file_button').addEventListener('click', (event) => {
             uploadFile(window.selectedFile);
         });
 
-        const dropZone = document.getElementById('drop_zone'); //Getting our drop zone by ID
+        const dropZone = document.getElementById('drop_zone');
         if (window.FileList && window.File) {
             dropZone.addEventListener('dragover', event => {
                 event.stopPropagation();
                 event.preventDefault();
-                event.dataTransfer.dropEffect = 'copy'; //Adding a visual hint that the file is being copied to the window
+                event.dataTransfer.dropEffect = 'copy';
             });
             dropZone.addEventListener('drop', event => {
                 event.stopPropagation();
                 event.preventDefault();
-                const files = event.dataTransfer.files; //Accessing the files that are being dropped to the window
-                window.selectedFile = files[0]; //Getting the file from uploaded files list (only one file in our case)
-                document.getElementById('file_name').innerHTML = "File selected: " + window.selectedFile.name; //Assigning the name of file to our "file_name" element
+                const files = event.dataTransfer.files;
+                window.selectedFile = files;
+                document.getElementById('file_name').innerHTML = "Tiedostoja valittu: " + window.selectedFile.length;
             });
         }
 
+		
+
         function uploadFile(file) {
+			if(file && file.length != 0){
+			document.getElementById("nofolder").style = "display:none;";
             var formData = new FormData();
 			for(var i=0;i<file.length;i++){
             formData.append('file[]', file[i]);
 			}
-            var ajax = new XMLHttpRequest();
+			formData.append('uploadid', '<?php echo $_SESSION["upload_id"]; ?>');
+            var apiRequest = new XMLHttpRequest();
 			
-			ajax.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
+			apiRequest.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {					
+					//console.log("just test");
 					console.log(this.responseText);
+					document.getElementById("main-form").reset(); 
+					var responseJson = JSON.parse(this.responseText);
+					window.selectedFile = null;
+					console.log(responseJson);
+					document.getElementById("download_link").innerHTML = "Lataa valmis tiedosto tästä linkistä: " + "<a href='"+responseJson[0]+"'>valmis tiedosto</a>";
 				}
+
 			};
 			
-            ajax.upload.addEventListener("progress", progressHandler, false);
-            ajax.open('POST', '/php_upload/upload_rest_api.php');
-            ajax.send(formData);
+            apiRequest.upload.addEventListener("progress", progressHandler, false);
+            apiRequest.open('POST', '/oneclickDev/upload_rest_api_edit.php');
+            apiRequest.send(formData);
+			for (var pair of formData.entries()) {
+				console.log(pair[0]+ ' - ' + pair[1].name); 
+			}
+			}//if file
+			else	{
+				document.getElementById("nofolder").style = "display:block;";
+			}
         }
 
         function progressHandler(event) {
             var percent = (event.loaded / event.total) * 100;
-            document.getElementById("progress_bar").value = Math.round(percent);
-            document.getElementById("progress_status").innerHTML = Math.round(percent) + "% uploaded";
+            //document.getElementById("progress_bar").value = Math.round(percent);
+			document.getElementById("progress-bar").style = "width:"+Math.round(percent)+"%;";
+			document.getElementById("progress-bar").innerHTML = Math.round(percent) + "% siirretty";
+			if(percent < 100){
+			
+				document.getElementById("progress-bar").className = "progress-bar progress-bar-striped";
+				document.getElementById("progress_status").innerHTML = "Siirretään tiedostoja. Kahvikuppi käteen ja odottelemaan.";
+				document.getElementById("upload_file_button").disabled = true;
+			
+			}else			{
+				
+				document.getElementById("progress_status").innerHTML = Math.round(percent) + "% siirretty";
+				document.getElementById("progress-bar").className = "progress-bar progress-bar-striped";
+				document.getElementById("upload_file_button").disabled = false;
+				
+				}
         }
     </script>
 	
