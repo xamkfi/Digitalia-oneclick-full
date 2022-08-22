@@ -384,21 +384,27 @@ def handleCreationEvent(event, storage):
                     report = open(validateReportPath)
                     data = json.load(report)
                     validationResult = data["summary"]["result"]
+                    sipname = ""
                     if validationResult=="VALID":
                         print("SIP succesfully validated against commons-ip version {}".format(csversion))
-                        zipFiles=[zipPath, validateReportPath]
-                        if(event.is_directory):
-                            finalPath = os.path.join(storage.getConfigItem("completeddir"), storage.getSessionCookie(rootuuid4))
-                        else:
-                            finalPath = storage.getConfigItem("completeddir")
-                        print("Final Path with session cookie {}".format(finalPath))
-                        
-                        finalZipFile = createZIPfromFiles(zipFiles, str(rootuuid4), finalPath)
-                        
-                        if os.path.isfile(finalZipFile) and deletePath:
-                            for onefile in zipFiles:
-                                os.remove(onefile)
+                        sipname = str(rootuuid4)
+                    else:
+                        print("INVALID SIP, check the report")
+                        sipname = "INVALID"+str(rootuuid4)
                     
+                    zipFiles=[zipPath, validateReportPath]
+                    if(event.is_directory):
+                        finalPath = os.path.join(storage.getConfigItem("completeddir"), storage.getSessionCookie(rootuuid4))
+                    else:
+                        finalPath = storage.getConfigItem("completeddir")
+                    print("Final Path with session cookie {}".format(finalPath))
+                    
+                    finalZipFile = createZIPfromFiles(zipFiles, sipname, finalPath)
+                    
+                    if os.path.isfile(finalZipFile) and deletePath:
+                        for onefile in zipFiles:
+                            os.remove(onefile)
+                
                 except OSError as err:
                     print("OS error, {}".format(err))
                     pass

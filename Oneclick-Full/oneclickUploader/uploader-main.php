@@ -168,7 +168,15 @@ echo $appName." ".$appVersion;
 					console.log(responseJson);
 					document.getElementById("download_link").innerHTML = "<h2>Download the created SIP file(s)</h2><br>"; 
 					for (const key in responseJson){
-						document.getElementById("download_link").innerHTML += "<br><a href='"+responseJson[key]+"'>Link</a>";
+						if (String(responseJson[key]).includes("INVALID")){
+							console.log("Invalid SIP found");
+							document.getElementById("download_link").innerHTML += 
+								"<br><a href='"+responseJson[key]+"'>INVALID-SIP_"+key+"</a>";							
+						}
+						else{
+							document.getElementById("download_link").innerHTML += 
+								"<br><a href='"+responseJson[key]+"'>SIP_"+key+"</a>";
+						}
 						}				
 					
 				}else{

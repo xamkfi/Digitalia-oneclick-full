@@ -1,2 +1,1 @@
-python /app/sample.py
-node /app/simpleserver.js
+apachectl -D FOREGROUND & python -u mainapp.py && fg

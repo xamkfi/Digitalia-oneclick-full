@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	}
 	
 	$dir_separator = DIRECTORY_SEPARATOR; 
-	$uploadedFiles = array(); //This is used for what..?
+	//$uploadedFiles = array(); //This is used for what..?
 	$sipfileArray = array();
 	$uploadersession = $_POST["uploadid"].$dir_separator;
 	
@@ -63,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		//echo ($_FILES['file']['tmp_name'][$i]);
 		//echo("\r\nempty--\r\n");
 		move_uploaded_file($_FILES['file']['tmp_name'][$i],$path.$dir_separator.$filename);
-		array_push($uploadedFiles, $_FILES['file']['name'][$i]); //Kun ainoa viite on tämä lisäys
+		//array_push($uploadedFiles, $_FILES['file']['name'][$i]); //Kun ainoa viite on tämä lisäys
     }
 	/*All files should now be in the temporary location
 		Now lets move those into the watched folder defined in config.ini file
@@ -104,8 +104,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	if (count($files)>0){
 	    foreach ($files as $onefile){
 	        $relative = "http://10.25.36.72/oneclickUploader/zipit/".$uploadersession."/".$onefile;
+	        $absolute = $finalSIPPath."/".$onefile;
 	        //echo("Relative path = ".$relative);
-	        array_push($sipfileArray,$relative);
+	        $filetime = date("Y-m-d H:i:s", filectime($absolute));
+	        
+	        //Will be replaced with arrayname[indexname] = value
+	        //array_push($sipfileArray,$relative);
+	        $sipfileArray[$filetime] = $relative;
 	    }
 	    /*
 	    for($z=0;$z<count($files);$z++){

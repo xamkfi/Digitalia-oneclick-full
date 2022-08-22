@@ -15,14 +15,18 @@
   
   
 	<metsHdr CREATEDATE="{{creationDate}}" LASTMODDATE="{{modificationDate}}" RECORDSTATUS="NEW" csip:OAISPACKAGETYPE="SIP">
-        <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="SOFTWARE">
-            <name>Oneclick eArchiving - Digitalia </name>
-            <note csip:NOTETYPE="SOFTWARE VERSION">0.0.4-dev</note> 
+        <agent ROLE="PRESERVATION" TYPE="ORGANIZATION">
+            <name>Oneclick eArchiving - Digitalia </name>             
         </agent>
+        <agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="SOFTWARE">
+            <name>Oneclick SIP creator</name>
+            <note csip:NOTETYPE="SOFTWARE VERSION">0.5-dev</note> 
+        </agent>        
         <agent ROLE="CREATOR" TYPE="INDIVIDUAL">
             <name>AJ</name>
-            <note csip:NOTETYPE="IDENTIFICATIONCODE">1234567</note>
+            <note csip:NOTETYPE="IDENTIFICATIONCODE">1234567890</note>
         </agent>
+        
     </metsHdr>
     <dmdSec ID="dmdSec" CREATED="{{creationDate}}" STATUS="CURRENT">
         <mdRef ID="DC.xml" LOCTYPE="URL" MDTYPE="DC" MDTYPEVERSION="SimpleDC20021212" xlink:type="simple" xlink:href="metadata/descriptive/DC.xml" MIMETYPE="{{dc_File_MIMEType}}" SIZE="{{dc_File_FileSize}}" CREATED="{{dc_File_FileModifyDate}}" CHECKSUM="{{dc_sha256}}" CHECKSUMTYPE="SHA-256"/>

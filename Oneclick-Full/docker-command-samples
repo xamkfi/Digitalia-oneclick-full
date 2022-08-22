@@ -1,8 +1,13 @@
 Perusbuildi:
-docker build -t oneclick .
+docker build -t oneclick . #--no-cache option builds all again
 
 Aja ja näytä 80 portti: 
 docker run -d -p 80:80 oneclick
+
+Aja, näytä 80 portti ja synkkaa aika
+docker run -v /etc/localtime:/etc/localtime:ro -d -p 80:80 oneclick
+
+docker run -e TZ=Europe/Helsinki -d -p 80:80 oneclick
 
 näytä ajossa olevat prosessit: 
 docker ps
@@ -12,3 +17,6 @@ docker exec -ti sharp_snyder bash
 
 lopeta goofy_ptolemy 
 docker stop goofy_ptolemy 
+
+Tyhjennä dockerin overlay2 hakemisto (kai tämä muutaki tyhjää mutta pääasiassa tämän)
+docker system prune -a -f

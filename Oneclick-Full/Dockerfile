@@ -4,7 +4,7 @@ FROM continuumio/anaconda3
 #Expose ports
 #EXPOSE 3000
 
-WORKDIR /app
+WORKDIR /app/oneclickSIPCreator
 #Basic update for the system
 RUN apt-get -y update 
 RUN apt-get -y upgrade
@@ -27,7 +27,15 @@ RUN apt-get install nano
 #Exposes the basic ports
 EXPOSE 80
 
+#UPdates clamav disabled for development
+#RUN freshclam
 
+#Updates conda environment and adds needed libraries
+RUN conda update --all
+
+RUN conda install -c conda-forge watchdog python-magic langdetect
+RUN conda install -c anaconda beautifulsoup4
+RUN pip install -U PyExifTool
 
 COPY phpinfo.php /var/www/html
 COPY uploads.ini /etc/php/8.1/apache2/conf.d
@@ -37,23 +45,16 @@ COPY ./oneclickSIPCreator/config.ini /var/www/html/oneclickUploader
 RUN chown -R www-data:www-data /var/www/html/oneclickUploader
 RUN service apache2 restart
 
+
 COPY ./oneclickSIPCreator /app/oneclickSIPCreator/.
 
-#UPdates clamav disabled for development
-#RUN freshclam
-
-#Updates conda environment and adds needed libraries
-#RUN conda update --all
-
-RUN conda install -c conda-forge watchdog python-magic langdetect
-RUN conda install -c anaconda beautifulsoup4
-RUN pip install -U PyExifTool
-
 #Runs apache and python background
-#CMD apachectl -D FOREGROUND && python ./app/oneclickSIPCreator/mainapp.py
-CMD apachectl -D FOREGROUND
+#CMD apachectl -D FOREGROUND 
+#CMD ["python", "-u", "/app/oneclickSIPCreator/mainapp.py"]
+#CMD apachectl -D FOREGROUND
 
-
+COPY startup-script.sh /app/oneclickSIPCreator/startup-script.sh
 #CMD ["python", "/app/oneclickSIPCreator/mainapp.py"]
-#CMD ["bash", "/app/startup-script.sh"] 
+ENTRYPOINT ["bash","/app/oneclickSIPCreator/startup-script.sh"]
+#CMD ["bash", "startup-script.sh"] 
 #siksi skripti jossa on kaksi käynnistyskomentoa
