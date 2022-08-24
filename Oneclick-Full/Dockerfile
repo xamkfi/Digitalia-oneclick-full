@@ -20,12 +20,13 @@ RUN apt-get -y upgrade
 #Installs exiftool, apache and php --> cleans unneeded
 RUN apt-get install -y exiftool php8.1 apache2 clamav clamav-daemon default-jre-headless
 COPY docker-apache.conf /etc/apache2/conf-enabled/docker-apache.conf
+COPY ports.conf /etc/apache2/ports.conf
 
 #Installs nano for development purposes, will be removed on final release
 RUN apt-get install nano
 
 #Exposes the basic ports
-EXPOSE 80
+#EXPOSE 80
 
 #UPdates clamav disabled for development
 #RUN freshclam

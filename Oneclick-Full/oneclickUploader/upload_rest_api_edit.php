@@ -103,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	
 	if (count($files)>0){
 	    foreach ($files as $onefile){
-	        $relative = "http://10.25.36.72/oneclickUploader/zipit/".$uploadersession."/".$onefile;
+	        $relative = "http://10.25.36.72:8080/oneclickUploader/zipit/".$uploadersession."/".$onefile;
 	        $absolute = $finalSIPPath."/".$onefile;
 	        //echo("Relative path = ".$relative);
 	        $filetime = date("Y-m-d H:i:s", filectime($absolute));
