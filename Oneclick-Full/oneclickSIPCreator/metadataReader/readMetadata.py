@@ -10,11 +10,12 @@ import os
 import subprocess
 import multiprocessing
 import pytz
-import datetime
+from datetime import datetime
 import mimetypes
 from multiprocessing import Pool
 from IDCreator import shaCalculator, uuidCreator
 from dataReceiver import receiver
+from _datetime import date
 #from exiftool.ExifToolHelper import 
 
 class readMeta:
@@ -34,26 +35,41 @@ class readMeta:
     
     def useExifToReadMeta(self, onePath):
         #print("Get metadata with exiftool for {} ".format(onePath))
-        with ExifToolHelper() as et:
-            tempDict = et.get_metadata(onePath)[0]
-        #print("Exifmeta is {}".format(tempDict))
+        
+        try: #Needed thus exiftool cannot find metadata for all the files
+            with ExifToolHelper() as et:
+                #print(et.get_metadata(onePath))
+                tempDict = et.get_metadata(onePath)[0]
+        except:
+            tempDict = {}
+            #print(os.stat(onePath))
+            #As a backup plan gets the size and creation time "manually"
+            tempDict["File:FileSize"] = os.path.getsize(onePath)
+            tempDict["File:FileModifyDate"]=str(datetime.now()).replace("-",":")
+            #isodate = timestamp.isoformat()
+            #print("{}".format(timestamp))
+            #tempDict["File:FileModifyDate"] = isodate 
+            pass
+        print("Exifmeta for {} is {}".format(onePath, tempDict))
         
         return tempDict
     
     def fastFixExifDate(self, tobeFixed):
         #exifdates look like 2021:12:10 12:33:26+02:00, replace the fist space
-        #Iso dates look like 2021-11-25T11:09:31+01:00
-        fixed = str(tobeFixed).replace(" ", "T", 1).replace(":", "-", 2) 
+        #Iso dates look like 2021-11-25T11:09:31+01:00        
+        fixed = str(tobeFixed).replace(" ", "T", 1).replace(":", "-", 2)
+        fixed = fixed.split(".")[0] #In case there's milliseconds 
+        print("Before date fix {} and after {}".format(tobeFixed, fixed))
         return fixed
     
     def multiProcessMetadataReader(self, onePath, dataPath): 
         relPath = os.path.relpath(onePath, dataPath)
         tempDict = self.useExifToReadMeta(onePath)
-        #print(tempDict)
+        #print("{}--{}".format(relPath, tempDict))
         if(len(tempDict)==0):
             print("No metadata for {}".format(onePath))
         metaDict = {}
-        replaceMimes = ["", "image/x-canon-cr2"]
+        replaceMimes = ["", "image/x-canon-cr2", "application/vnd.ms-pki.seccat"]
         """Replaces all : with _"""
         for key in tempDict:
         #print("repmets for root: {}-->{}".format("repmets_"+key, temprepMETSMeta[key]))        
@@ -89,7 +105,7 @@ class readMeta:
         #print("Exif MIME {} vs guessed MIME {}".format(metaDict['File_MIMEType'], guessedMime))
         
         if metaDict['File_MIMEType'] in replaceMimes:
-            print("Replacing {} mimetype with a generic application/octet-stream".format(metaDict['File_MIMEType']))
+            #print("Replacing {} mimetype with a generic application/octet-stream".format(metaDict['File_MIMEType']))
             metaDict['File_MIMEType'] = "application/octet-stream"
         
         #temptime =  (os.stat(onePath)).st_mtime
@@ -116,13 +132,17 @@ class readMeta:
         for onePath in filePathsList:
             #metadataPool.apply_async(self.multiProcessMetadataReader, args=(onePath, dataPath), callback=self.multiProcessResults)
             result = metadataPool.apply_async(self.multiProcessMetadataReader, args=(onePath, dataPath)) 
+            #print(result)
             result_objs.append(result)
+        print(len(result_objs))
+        
         results = [result.get() for result in result_objs]
+        metadataPool.close()
+        metadataPool.join()    
         print("Returned metadata for {} files".format(len(results)))
         for oneresult in results:
             self.allFilesMetadata[oneresult[0]] = oneresult[1]
         ##self.allFilesMetadata[results[0]] = resultArray[1] 
-        metadataPool.close()
-        metadataPool.join()    
+        
         #print(self.allFilesMetadata)
         return self.allFilesMetadata

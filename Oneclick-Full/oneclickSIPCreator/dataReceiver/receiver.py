@@ -30,7 +30,7 @@ from dataStorage import storage
 metsDCValues = ['Content-Length', 'sha256' ]
 #validator = "commons-ip2-cli-2.0.1.jar"
 
-deletePath = True
+deletePath = False
 includeSchemas = False
 
 #runtimeDir = "notdefined"
@@ -372,8 +372,9 @@ def handleCreationEvent(event, storage):
             #print("Basepath before zipping = {}".format(SIPPathNames['basePath']))
             zipPath = createZIPfromSIP(SIPPathNames['basePath'], rootuuid4)
             print("SIP file in {}".format(zipPath))
-            if os.path.isfile(zipPath) and deletePath:
+            if deletePath:
                 shutil.rmtree(SIPPathNames['basePath'])    
+            if os.path.isfile(zipPath):
                 #Last step is to validate the SIP file with commons IP
                 commonsip = storage.getConfigItem("commonsip")
                 #subprocess.call(['java', '-jar', commonsip, "validate", "-i", zipPath, "-r"])

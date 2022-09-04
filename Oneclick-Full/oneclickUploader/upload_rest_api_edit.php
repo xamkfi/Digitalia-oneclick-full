@@ -27,8 +27,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		if(str_starts_with($line, "completeddir"))	{
 			$pieces = explode("=", $line);
 			$sip_path = trim($pieces[1]);
-			//$sip_path = substr($line, 16);
-			//echo("Completed SIPS path = ".$sip_path);
+			
+		}
+		if(str_starts_with($line, "ip"))	{
+		    $pieces = explode("=", $line);
+		    $ip = trim($pieces[1]);
+		    //echo ($ip);
+		}
+		if(str_starts_with($line, "port"))	{
+		    $pieces = explode("=", $line);
+		    $port = trim($pieces[1]);
+		    
 		}
 	}
 	
@@ -103,7 +112,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	
 	if (count($files)>0){
 	    foreach ($files as $onefile){
-	        $relative = "http://10.25.36.72:8080/oneclickUploader/zipit/".$uploadersession."/".$onefile;
+	        $relative = "http://".$ip.":".$port."/oneclickUploader/zipit/".$uploadersession."/".$onefile;
+	        
+	        //$relative = "http://10.25.36.72:8080/oneclickUploader/zipit/".$uploadersession."/".$onefile;
 	        $absolute = $finalSIPPath."/".$onefile;
 	        //echo("Relative path = ".$relative);
 	        $filetime = date("Y-m-d H:i:s", filectime($absolute));
