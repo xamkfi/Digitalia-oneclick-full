@@ -149,7 +149,8 @@ echo $appName." ".$appVersion;
 			document.getElementById("nofolder").style = "display:none;";
             var formData = new FormData();
 			for(var i=0;i<file.length;i++){
-            formData.append('file[]', file[i]);
+				console.log(file);
+            	formData.append('file[]', file[i]);
 			}
 			formData.append('uploadid', '<?php echo $_SESSION["upload_id"]; ?>');
             var apiRequest = new XMLHttpRequest();
@@ -191,7 +192,8 @@ echo $appName." ".$appVersion;
             console.log("After config reading");
 			apiRequest.send(formData);
 			for (var pair of formData.entries()) {
-				console.log(pair[0]+ ' - ' + pair[1].name); 
+				//console.log(pair);
+				console.log(pair[0]+ ' - ' + pair[1].name+' - org.date '+pair[1].lastModifiedDate); 
 			}
 			}//if file
 			else	{

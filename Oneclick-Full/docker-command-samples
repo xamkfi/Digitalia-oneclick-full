@@ -20,3 +20,6 @@ docker stop goofy_ptolemy
 
 Tyhjennä dockerin overlay2 hakemisto (kai tämä muutaki tyhjää mutta pääasiassa tämän)
 docker system prune -a -f
+
+Näytä logit
+docker logs elegant_bassi
