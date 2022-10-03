@@ -149,24 +149,24 @@ echo $appName." ".$appVersion;
 			document.getElementById("nofolder").style = "display:none;";
             var formData = new FormData();
 			for(var i=0;i<file.length;i++){
-				console.log(file);
+				//console.log(file);
             	formData.append('file[]', file[i]);
 			}
 			formData.append('uploadid', '<?php echo $_SESSION["upload_id"]; ?>');
             var apiRequest = new XMLHttpRequest();
 			
 			apiRequest.onreadystatechange = function() {
-				console.log("ReadyState & Status =");
-				console.log(this.readyState, this.status);
+				//console.log("ReadyState & Status =");
+				//console.log(this.readyState, this.status);
 				if (this.readyState == 4 && this.status == 200) {
 					document.getElementById("main-form").reset(); 
-					console.log("AAA");
-					console.log(this.responseText);
-					console.log("BBB");
+					//console.log("AAA");
+					//console.log(this.responseText);
+					//console.log("BBB");
 					var responseJson = JSON.parse(this.responseText);
 					window.selectedFile = null;
-					console.log("CCC");
-					console.log(responseJson);
+					//console.log("CCC");
+					//console.log(responseJson);
 					document.getElementById("download_link").innerHTML = "<h2>Download the created SIP file(s)</h2><br>"; 
 					for (const key in responseJson){
 						if (String(responseJson[key]).includes("INVALID")){
@@ -181,20 +181,21 @@ echo $appName." ".$appVersion;
 						}				
 					
 				}else{
-					console.log("Something else for testing");
+					//console.log("Something else for testing");
 				}
 
 			};
 			
             apiRequest.upload.addEventListener("progress", progressHandler, false);
-            console.log("Before reading config file");
+            //console.log("Before reading config file");
 			apiRequest.open('POST', 'upload_rest_api_edit.php');
-            console.log("After config reading");
+            //console.log("After config reading");
 			apiRequest.send(formData);
-			for (var pair of formData.entries()) {
+			
+			//for (var pair of formData.entries()) {
 				//console.log(pair);
-				console.log(pair[0]+ ' - ' + pair[1].name+' - org.date '+pair[1].lastModifiedDate); 
-			}
+				//console.log(pair[0]+ ' - ' + pair[1].name+' - org.date '+pair[1].lastModifiedDate); 
+			//}
 			}//if file
 			else	{
 				document.getElementById("nofolder").style = "display:block;";

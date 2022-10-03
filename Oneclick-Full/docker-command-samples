@@ -7,7 +7,7 @@ docker run -d -p 80:80 oneclick
 Aja, näytä 80 portti ja synkkaa aika
 docker run -v /etc/localtime:/etc/localtime:ro -d -p 80:80 oneclick
 
-docker run -e TZ=Europe/Helsinki -d -p 80:80 oneclick
+docker run -e TZ=Europe/Helsinki -d -p 8080:8080 oneclick
 
 näytä ajossa olevat prosessit: 
 docker ps

@@ -47,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$uploadersession = $_POST["uploadid"].$dir_separator;
 	/*
 	 * Just prints the content of the post message	 * 
-	 */
+	 
 	foreach ($_POST as $key => $value){
 	    echo "<tr>";
 	    echo "<td>";
@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	    echo $value;
 	    echo "</td>";
 	    echo "</tr>";
-	}
+	}*/
 	
 	
 	/*
@@ -71,12 +71,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	
     //echo("Session id = ".$uploadersession."\r\n");
 	$countfiles = count($_FILES['file']['name']);
-	echo("Testiä\r\n");
-    for($i=0;$i<$countfiles;$i++){
-        echo("Round ".$i);
-        $filename = basename($_FILES['file']['name'][$i]);		
-		echo($_FILES['file']['lastModifiedDate'][$i]);
-		$path = trim($tempPath).$dir_separator.$uploadersession.pathinfo($_FILES['file']['full_path'][$i], PATHINFO_DIRNAME);
+	for($i=0;$i<$countfiles;$i++){
+        $filename = basename($_FILES['file']['name'][$i]);
+        $path = trim($tempPath).$dir_separator.$uploadersession.pathinfo($_FILES['file']['full_path'][$i], PATHINFO_DIRNAME);
 		//echo("\r\nPolku ".$path."\r\n");
 		if (!is_dir($path)) {
 			mkdir($path, 0777, true);

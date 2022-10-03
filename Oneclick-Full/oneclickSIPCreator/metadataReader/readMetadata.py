@@ -50,7 +50,7 @@ class readMeta:
             #print("{}".format(timestamp))
             #tempDict["File:FileModifyDate"] = isodate 
             pass
-        print("Exifmeta for {} is {}".format(onePath, tempDict))
+        #print("Exifmeta for {} is {}".format(onePath, tempDict))
         
         return tempDict
     
@@ -59,7 +59,7 @@ class readMeta:
         #Iso dates look like 2021-11-25T11:09:31+01:00        
         fixed = str(tobeFixed).replace(" ", "T", 1).replace(":", "-", 2)
         fixed = fixed.split(".")[0] #In case there's milliseconds 
-        print("Before date fix {} and after {}".format(tobeFixed, fixed))
+        #print("Before date fix {} and after {}".format(tobeFixed, fixed))
         return fixed
     
     def multiProcessMetadataReader(self, onePath, dataPath): 
@@ -67,7 +67,7 @@ class readMeta:
         tempDict = self.useExifToReadMeta(onePath)
         #print("{}--{}".format(relPath, tempDict))
         if(len(tempDict)==0):
-            print("No metadata for {}".format(onePath))
+            print("No metadata found for {}".format(onePath))
         metaDict = {}
         replaceMimes = ["", "image/x-canon-cr2", "application/vnd.ms-pki.seccat"]
         """Replaces all : with _"""
@@ -93,7 +93,7 @@ class readMeta:
         #print("After -->{}".format(metaDict))
         
         if 'ExifTool_Error' in metaDict:
-            #print("Exiftool error {}".format(onePath))
+            print("Exiftool metadata too accurate, replacing filetype in {} with application/octet-stream".format(onePath))
             metaDict['File_MIMEType'] = "application/octet-stream"
             #print(metaDict)
         guessedMime = mimetypes.guess_type(onePath, True)

@@ -309,9 +309,10 @@ def handleCreationEvent(event, storage):
             storage.storePayloadMetadata(rootuuid4, PayloadMetadataDict)
             #above dict contains full file path:all its meta in a dict) below is just for testing the content
             
-            #for key in FilesMetadataDict:
-            #    print("{}---{}".format(key, FilesMetadataDict[key]))
-            
+            """
+            for key in PayloadMetadataDict:
+                print("{}---{}".format(key, PayloadMetadataDict[key]))
+            """
             #Use it to generate rootDC infos
             #rootDCMeta = createRootDCDict(PayloadMetadataDict)
             #rootDC.update(rootDCMeta) #Write the found meta to the rootDCMeta
