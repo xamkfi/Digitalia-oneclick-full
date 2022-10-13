@@ -16,18 +16,23 @@ from langdetect import detect
 #import timeit
 import subprocess
 import xml.etree.ElementTree as ET
-from dataReceiver import dataExtractor
+#import dataExtractor
 from metadataReader import readMetadata
 from IDCreator import uuidCreator
 from templating import xmlTemplating
 #from pip._vendor.pkg_resources import ZipProvider
 from dataReceiver.filenameFixer import checkAndFixFileNames
 from dataStorage import storage
+#import langdetect
+import multiprocessing
+from multiprocessing import Pool
+import langdetect
 #from email.mime import base
 
 
 
 metsDCValues = ['Content-Length', 'sha256' ]
+ignoredFileTypes = ['asice']
 #validator = "commons-ip2-cli-2.0.1.jar"
 
 deletePath = False
@@ -160,7 +165,7 @@ def createZIPfromSIP(basePath, baseName):
 
 def doVirusScan(path):
     print("Completing antivirus scan, takes a while..")
-    "clamscan -r -o rektori_kaskkirjad/"
+    #clamscan -r -o rektori_kaskkirjad/
     value = -1
     AVProcess = subprocess.Popen(['clamscan', '-r', '-o', path], stdout=subprocess.PIPE, universal_newlines=True)
     results = str(AVProcess.communicate()[0]).strip().splitlines()
@@ -195,6 +200,45 @@ def checkRepMetsFileContent(repMets_file, inputPaths, repuuidPath):
         if elem.attrib["{http://www.w3.org/1999/xlink}href"] in orgPaths:
             orgPaths.remove(elem.attrib["{http://www.w3.org/1999/xlink}href"])
     print("{} files not found in mets.xml -->{}".format(len(orgPaths), orgPaths))
+
+def multiprocessLangDetect(tika, fullpath):
+    print(fullpath)
+    try:
+        langDetectProcess = subprocess.Popen(['java', '-jar', tika, "-l", fullpath], stdout=subprocess.PIPE, universal_newlines=True)
+        oneLang = langDetectProcess.communicate()[0]
+        return oneLang        
+    except:
+        print("No ocr data in {}".format(fullpath))
+        
+
+def doLangDetect(dataPath, passedstorage):
+    tika = passedstorage.getConfigItem("tika")
+    allResults = []
+    poolMaxCount = multiprocessing.cpu_count()-1    
+    langPool = Pool(poolMaxCount)        
+    #result_objs = []
+    #result = metadataPool.apply_async(self.multiProcessMetadataReader, args=(onePath, dataPath)) 
+    #result_objs.append(result)
+    
+    for root, dirs, files in os.walk(dataPath):
+        for file in files:                        
+            fullpath = os.path.join(root, file)
+            oneResult = langPool.apply_async(multiprocessLangDetect, args=(tika, fullpath))
+            allResults.append(oneResult)
+    results = [result.get().strip() for result in allResults]        
+    langPool.close()
+    langPool.join()        
+    langDict = {}
+    for oneResult in results:
+        if oneResult in langDict:
+            langDict[oneResult] = langDict[oneResult]+1
+        else:
+            langDict[oneResult] = 1
+    
+    
+    print("Detected langs = {}".format(langDict))  
+    
+    return langDict
 
 def handleCreationEvent(event, storage):
     """gets the event from watchdog. Only the on_created event gets in here """
@@ -277,6 +321,7 @@ def handleCreationEvent(event, storage):
             #rootMets.update({'generateRepMapFromFolderStructure':xmlTemplating.generateRepMapFromFolderStructure(SIPPathNames['repPath'])})
             
             rootDC.update({'dc_date':createTime})
+            rootDC.update({'dc_creator':storage.getConfigItem("sipcreator")}) #Reads the creator from config.ini content
             repMets.update({'creationDate':createTime})
             repMets.update({'rootuuid4':rootuuid4})
             repMets.update({'repuuid4':repuuid4})
@@ -309,10 +354,44 @@ def handleCreationEvent(event, storage):
             storage.storePayloadMetadata(rootuuid4, PayloadMetadataDict)
             #above dict contains full file path:all its meta in a dict) below is just for testing the content
             
-            """
+            """harvests the rootDC metadata from the payload, this one finds all mimetypes"""
+            mimeTypes = {}
             for key in PayloadMetadataDict:
-                print("{}---{}".format(key, PayloadMetadataDict[key]))
+                oneMetaContent = PayloadMetadataDict[key]
+                for name in oneMetaContent:
+                    if name =="File_MIMEType":
+                        if oneMetaContent[name] not in mimeTypes:
+                            mimeTypes[oneMetaContent[name]]=1
+                        else:
+                            currentValue = mimeTypes[oneMetaContent[name]]
+                            mimeTypes[oneMetaContent[name]] = currentValue+1
+                        #print(oneMetaContent[name])
+            sorted_values = sorted(mimeTypes.values(), reverse=True)
+            sorted_dict = {}
+            totalFiles = 0
+            for i in sorted_values:
+                totalFiles+=i
+                for k in mimeTypes.keys():
+                    if mimeTypes[k] == i:
+                        sorted_dict[k] = mimeTypes[k]
+            print("After checks mimetype list = {}".format(sorted_dict))
+            rootDC.update({"dc_format":"{}".format(sorted_dict)})
+            rootDC.update({"dc_description":"Contains {} file(s)".format(totalFiles)})
+            mimeTypes.clear() #just clears the above dict thus not needed anymore
+            sorted_dict.clear()
+            
+            """Trying to detect payload languages
+            Using tika to do this
+            Works OK, but slows down a lot (e.g. 68 files with langdetect ~430s, without ~15s)          
             """
+            if storage.getConfigItem("detectlanguage") == "True":
+                print("Language detection activated")
+                languages = doLangDetect(SIPPathNames['dataPath'], storage)
+                rootDC.update({"dc_language":"{}".format(languages)})
+            else:
+                rootDC.update({"dc_language":"Language detection turned of in config.ini file"})
+            #print(SIPPathNames['dataPath'])
+           
             #Use it to generate rootDC infos
             #rootDCMeta = createRootDCDict(PayloadMetadataDict)
             #rootDC.update(rootDCMeta) #Write the found meta to the rootDCMeta

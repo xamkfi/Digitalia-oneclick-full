@@ -87,5 +87,3 @@ if __name__ == '__main__':
         uploadWatcher.run()
     else:
         print("Something strange in defined upload dir, please check the config.ini file")
-    
-    pass

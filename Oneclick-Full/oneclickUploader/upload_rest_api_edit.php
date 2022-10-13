@@ -109,11 +109,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	fclose($sipfile);
 	*/
 	sleep(10);
-	$files = array_diff(scandir($finalSIPPath), array('.', '..'));
+	//$files = array_diff(scandir($finalSIPPath), array('.', '..'));
+	$files = scan_dir($finalSIPPath);
 	while (count($files)==0){
 	    //echo("Sleeping 10 seconds");
 	    sleep(10);
-	    $files = array_diff(scandir($finalSIPPath), array('.', '..'));
+	    //$files = array_diff(scandir($finalSIPPath), array('.', '..'));
+	    $files = scan_dir($finalSIPPath);
 	}	
 	
 	//echo("Files in completed dir = ".count($files));
@@ -121,7 +123,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	
 	
 	if (count($files)>0){
+	    $sipfileArray = array();
 	    foreach ($files as $onefile){
+	        
 	        $relative = "http://".$ip.":".$port."/oneclickUploader/zipit/".$uploadersession."/".$onefile;
 	        
 	        //$relative = "http://10.25.36.72:8080/oneclickUploader/zipit/".$uploadersession."/".$onefile;
@@ -133,14 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	        //array_push($sipfileArray,$relative);
 	        $sipfileArray[$filetime] = $relative;
 	    }
-	    /*
-	    for($z=0;$z<count($files);$z++){
-	        if($files[$z]==$sipfile_name."_".$timestamp.".txt"){
-	            array_push($sipfileArray,$sip_file_path.$dir_separator.$allFiles[$z]);
-	        }
-	    }*/
-	    #Need to remove /var/www/html/ part from the final array --> try $_SERVER['DOCUMENT_ROOT']
-	    //echo $_SERVER['DOCUMENT_ROOT'];
+	    
 	    echo json_encode($sipfileArray);	    
 	}
 	
@@ -150,6 +147,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	else {		
 		echo "Nothing to do.";		
 	}
+	
+function scan_dir($dir) {
+    $ignored = array('.', '..', '.svn', '.htaccess');
+    
+    $files = array();
+    foreach (scandir($dir) as $file) {
+        if (in_array($file, $ignored)) continue;
+        $files[$file] = filemtime($dir . '/' . $file);
+    }
+    
+    arsort($files);
+    $files = array_keys($files);
+    
+    return ($files) ? $files : false;
+}
+	
 	
 function moveToProcess($originalPath, $processPath){
 	//echo("\r\nMoving from ".$originalPath." to ".$processPath);

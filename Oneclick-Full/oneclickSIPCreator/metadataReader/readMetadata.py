@@ -134,7 +134,7 @@ class readMeta:
             result = metadataPool.apply_async(self.multiProcessMetadataReader, args=(onePath, dataPath)) 
             #print(result)
             result_objs.append(result)
-        print(len(result_objs))
+        #print(len(result_objs))
         
         results = [result.get() for result in result_objs]
         metadataPool.close()

@@ -33,71 +33,99 @@ echo $appName." ".$appVersion;
 
 </head>
 <body>
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-  <ul class="navbar-nav">
-    <li class="nav-item active">
-      <a class="nav-link disabled" href="uploader-main.php">EN</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="uploader-main-fi.php">FI</a>
-    </li>
-  </ul>
+<nav class="navbar navbar-expand-sm navbar-dark" style="background:#b9b0b0;">
+<!-- Brand/logo -->
+  <a class="navbar-brand" href="#">Oneclick eArchiving</a>
+  
 </nav>
-<div class="container p-3 my-3 bg-dark text-white">
+<div class="container p-3 my-3 text-white" style="background:#e4d1d1;">
 
 <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" data-toggle="tab" href="#folder-upload-tab">Upload folder</a>
+      <a class="nav-link active" data-toggle="tab" href="#folder-upload-tab"><h3 style="color:grey;">Upload folder</h3></a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#files-upload-tab">Upload files</a>
+      <a class="nav-link" data-toggle="tab" href="#files-upload-tab"><h3 style="color:grey;">Upload files</h3></a>
     </li>
   </ul>
   <form id="main-form">
-    	<div class="tab-content">
-    	<div id="folder-upload-tab" class="container tab-pane active"><br>
-    	<h3>Choose folder to upload:</h3>
-        <div class="custom-file" style="height:100%;color:black;text-align:center;border:2px solid white;">
-    		<input type="file" name="file[]" class="custom-file-input" id="file[]" webkitdirectory multiple style="padding:200px;">
-    		<label class="custom-file-label" for="file_to_upload">Choose folder or drop below</label>
-    	</div>
-    	 </div>
-    	 <div id="files-upload-tab" class="container tab-pane fade"><br>
-        <h3>Drag & drop files:</h3>
-    	
-        <div id="drop_zone"  onmouseenter="highlightSelection('animationid')" onmouseleave="resetSelection('animationid')">
-            <!--*DROP HERE*-->
-    		<div id="animationid" class="animate__animated animate__pulse">
-    			<i class="fa fa-cloud-upload fa-5x"></i>
-    		</div>
-        </div>
-    	</div>
-        <hr>
-        <p id="file_name"></p>
-    	<div class="alert alert-warning" id="nofolder" style="display:none;">
-        No folder selected.
+<div class="tab-content" style="background:white;padding:5px;">
+    
+    
+	
+	<div id="folder-upload-tab" class="container tab-pane active"><br>
+	
+    <div class="custom-file" style="height:100%;color:black;text-align:center;border:2px dotted #e4d1d1;border-top:0;">
+		<input type="file" name="file[]" class="custom-file-input" id="file[]" webkitdirectory multiple style="padding:200px;">
+		<label class="custom-file-label" for="file_to_upload">Choose folder or drop below</label>
+	</div>
+	 </div>
+	 <div id="files-upload-tab" class="container tab-pane fade"><br>
+    
+	
+    <div id="drop_zone"  onmouseenter="highlightSelection('animationid')" onmouseleave="resetSelection('animationid')">
+        <!--*DROP HERE*-->
+		<div id="animationid" class="animate__animated animate__pulse">
+			<i class="fa fa-cloud-upload fa-5x" style="color:#e4d1d1;"></i>
+		</div>
+    </div>
+	</div>
+    <p id="file_name"></p>
+	<div class="row" style="padding-left:15px;padding-right:15px;">
+	<div class="col-sm-12">
+		<div class="alert alert-warning alert-dismissible" id="nofolder" style="display:none;">
+			No folder selected.
+		</div>
+		<div class="alert alert-info alert-dismissible" id="filesselected" style="display:none;">
+			<p id="filesselected-p">Files selected.</p>
+		</div>
+  </div>
+  </div>
+  <div class="row" style="padding-left:15px;padding-right:15px;">
+  <div class="col-sm-2">
+	<input type="button" class="btn btn-primary" value="Upload" id="upload_file_button">
+	</div>
+	<div class="col-sm-10">
+    <!--<progress id="progress_bar" value="0" max="100" style="width:400px;"></progress> -->
+ <div class="progress" style="height:30px">
+  <div id="progress-bar" class="progress-bar bg-light" style="height:30px;color:black;width:100%;">No uploads in progress</div>
+</div>
+</div>
+</div> 
+
+
+<div class="row" style="padding-left:15px;padding-right:15px;">
+  	<div class="col-sm-12">
+	<p id="progress_status" style="color:black;"></p>
+	<p id="download_link" style="color:black;"></p>
+	</div>
+</div> 
+    
+   
+</div>
+</form>
+<div id="accordion" style="color:black;">
+    <div class="card">
+      <div class="card-header">
+        <a class="card-link" data-toggle="collapse" href="#collapseOne">
+          All created SIPs
+		  <i class="fa fa-angle-down"></i>
+        </a>
       </div>
-      <div class="row">
-      <div class="col-sm-2">
-    	<input type="button" class="btn btn-primary" value="Upload" id="upload_file_button">
-    	</div>
-    	<div class="col-sm-10">
-        <!--<progress id="progress_bar" value="0" max="100" style="width:400px;"></progress> -->
-     <div class="progress" style="height:30px">
-      <div id="progress-bar" class="progress-bar bg-light" style="height:30px;color:black;width:100%;">No uploads in progress</div>
-    </div>
-    </div>
-    </div> 	
-        <p id="progress_status"></p>
-    	<p id="download_link"></p>
-       
-    </div>
-</form> 
+      <div id="collapseOne" class="collapse" data-parent="#accordion">
+		 <div class="card-body">
+			<b>Please note that this list will be reset when you close the browser.</b>
+          <div id="sipfiles-list">
+		  </div>
+        </div>
+      </div>
+    </div>   
+  </div>
 </div>
 <div class="container p-4 my-4" style="padding-bottom: 200px;">
 </div>
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-center fixed-bottom">
+<nav class="navbar navbar-expand-sm navbar-dark justify-content-center fixed-bottom" style="background:#b9b0b0;">
             <!-- Links -->
             <ul class="navbar-nav">
 			<li class="nav-item">
@@ -120,7 +148,8 @@ echo $appName." ".$appVersion;
     <script>
         document.getElementById('file[]').addEventListener('change', (event) => {
 			window.selectedFile = event.target.files;
-			document.getElementById('file_name').innerHTML = "Files selected: " + window.selectedFile.length+ "<br>";
+			document.getElementById('filesselected-p').innerHTML = "Files selected: " + window.selectedFile.length+ "<br>";
+			document.getElementById('filesselected').style = "display:block;";
 			
         });
 
@@ -149,53 +178,44 @@ echo $appName." ".$appVersion;
 			document.getElementById("nofolder").style = "display:none;";
             var formData = new FormData();
 			for(var i=0;i<file.length;i++){
-				//console.log(file);
             	formData.append('file[]', file[i]);
 			}
 			formData.append('uploadid', '<?php echo $_SESSION["upload_id"]; ?>');
             var apiRequest = new XMLHttpRequest();
 			
-			apiRequest.onreadystatechange = function() {
-				//console.log("ReadyState & Status =");
-				//console.log(this.readyState, this.status);
-				if (this.readyState == 4 && this.status == 200) {
+			apiRequest.onload = function() {
+				 
 					document.getElementById("main-form").reset(); 
-					//console.log("AAA");
-					//console.log(this.responseText);
-					//console.log("BBB");
 					var responseJson = JSON.parse(this.responseText);
-					window.selectedFile = null;
-					//console.log("CCC");
-					//console.log(responseJson);
-					document.getElementById("download_link").innerHTML = "<h2>Download the created SIP file(s)</h2><br>"; 
+					window.selectedFile = null;					
+					console.log(responseJson);
+					document.getElementById("sipfiles-list").innerHTML = ""
 					for (const key in responseJson){
+						console.log(key);
 						if (String(responseJson[key]).includes("INVALID")){
 							console.log("Invalid SIP found");
-							document.getElementById("download_link").innerHTML += 
+							document.getElementById("sipfiles-list").innerHTML += 
 								"<br><a href='"+responseJson[key]+"'>INVALID-SIP_"+key+"</a>";							
 						}
 						else{
-							document.getElementById("download_link").innerHTML += 
-								"<br><a href='"+responseJson[key]+"'>SIP_"+key+"</a>";
+							document.getElementById("sipfiles-list").innerHTML += 
+								"<br><a href='"+responseJson[key]+"'>Latest SIP_"+key+"</a>";
 						}
-						}				
+					}
 					
-				}else{
-					//console.log("Something else for testing");
-				}
+					//for(var index = 2;index<responseJson.length;index++)	{
+					//	document.getElementById("sipfiles-list").innerHTML += "<div><a href='"+responseJson.files.allfiles[index]+"'>"+responseJson.files.allfiles[index]+"</a></div>";
+					//}
+					document.getElementById('filesselected').style = "display:none;";
 
 			};
 			
             apiRequest.upload.addEventListener("progress", progressHandler, false);
-            //console.log("Before reading config file");
-			apiRequest.open('POST', 'upload_rest_api_edit.php');
-            //console.log("After config reading");
-			apiRequest.send(formData);
-			
-			//for (var pair of formData.entries()) {
-				//console.log(pair);
-				//console.log(pair[0]+ ' - ' + pair[1].name+' - org.date '+pair[1].lastModifiedDate); 
-			//}
+            apiRequest.open('POST', '/oneclickUploader/upload_rest_api_edit.php');
+            apiRequest.send(formData);
+			for (var pair of formData.entries()) {
+				console.log(pair[0]+ ' - ' + pair[1].name); 
+			}
 			}//if file
 			else	{
 				document.getElementById("nofolder").style = "display:block;";
@@ -215,7 +235,7 @@ echo $appName." ".$appVersion;
 			
 			}else			{
 				
-				document.getElementById("progress_status").innerHTML = Math.round(percentUploaded) + "% uploaded";
+				//document.getElementById("progress_status").innerHTML = Math.round(percentUploaded) + "% uploaded";
 				document.getElementById("progress-bar").className = "progress-bar progress-bar-striped";
 				document.getElementById("upload_file_button").disabled = false;
 				
@@ -224,5 +244,4 @@ echo $appName." ".$appVersion;
     </script>
 	
 </body>
-
 </html>
