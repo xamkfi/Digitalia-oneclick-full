@@ -39,7 +39,7 @@ deletePath = False
 includeSchemas = False
 
 #runtimeDir = "notdefined"
-csversion = "2.0.1"
+csversion = "2.2.1"
 
 """
 Creates the basic SIP folder structure, metadata, representations, datauuid and data folder
@@ -206,6 +206,9 @@ def multiprocessLangDetect(tika, fullpath):
     try:
         langDetectProcess = subprocess.Popen(['java', '-jar', tika, "-l", fullpath], stdout=subprocess.PIPE, universal_newlines=True)
         oneLang = langDetectProcess.communicate()[0]
+        print(len(oneLang))
+        if len(oneLang)==1:
+            oneLang="NA"
         return oneLang        
     except:
         print("No ocr data in {}".format(fullpath))
@@ -488,7 +491,7 @@ def handleCreationEvent(event, storage):
                 
                 except OSError as err:
                     print("OS error, {}".format(err))
-                    pass
+                    
             
             return
 
@@ -528,7 +531,7 @@ def getDirectoryContent(pathname, repOrgMetaPath, storage):
 
 def getDirectoryContentError(quilty):
     print("Error in directory browsing {}".format(type(quilty)))
-    pass
+    
     
     
     

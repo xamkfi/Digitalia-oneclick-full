@@ -145,7 +145,7 @@ echo $appName." ".$appVersion;
 			  ?>
             </ul>
         </nav> 
-    <script>
+    <script type="text/javascript">
         document.getElementById('file[]').addEventListener('change', (event) => {
 			window.selectedFile = event.target.files;
 			document.getElementById('filesselected-p').innerHTML = "Files selected: " + window.selectedFile.length+ "<br>";
@@ -175,48 +175,50 @@ echo $appName." ".$appVersion;
 
         function uploadFile(file) {
 			if(file && file.length != 0){
-			document.getElementById("nofolder").style = "display:none;";
-            var formData = new FormData();
-			for(var i=0;i<file.length;i++){
-            	formData.append('file[]', file[i]);
-			}
-			formData.append('uploadid', '<?php echo $_SESSION["upload_id"]; ?>');
-            var apiRequest = new XMLHttpRequest();
-			
-			apiRequest.onload = function() {
-				 
+				document.getElementById("nofolder").style = "display:none;";
+	            var formData = new FormData();
+				for(var i=0;i<file.length;i++){
+	            	formData.append('file[]', file[i]);
+				}
+				formData.append('uploadid', '<?php echo $_SESSION["upload_id"]; ?>');
+	            var apiRequest = new XMLHttpRequest();			
+				apiRequest.onload = function() {				
 					document.getElementById("main-form").reset(); 
+					console.log(this.responseText);
+					
 					var responseJson = JSON.parse(this.responseText);
 					window.selectedFile = null;					
-					console.log(responseJson);
+					
 					document.getElementById("sipfiles-list").innerHTML = ""
+					
 					for (const key in responseJson){
 						console.log(key);
 						if (String(responseJson[key]).includes("INVALID")){
 							console.log("Invalid SIP found");
 							document.getElementById("sipfiles-list").innerHTML += 
-								"<br><a href='"+responseJson[key]+"'>INVALID-SIP_"+key+"</a>";							
+								"<br><a href='"+responseJson[key]+"'>"+key+"_SIP(INVALID-CHECK)</a>";							
 						}
 						else{
 							document.getElementById("sipfiles-list").innerHTML += 
-								"<br><a href='"+responseJson[key]+"'>Latest SIP_"+key+"</a>";
+								"<br><a href='"+responseJson[key]+"'>"+key+"_SIP</a>";
 						}
 					}
 					
+				
 					//for(var index = 2;index<responseJson.length;index++)	{
 					//	document.getElementById("sipfiles-list").innerHTML += "<div><a href='"+responseJson.files.allfiles[index]+"'>"+responseJson.files.allfiles[index]+"</a></div>";
 					//}
 					document.getElementById('filesselected').style = "display:none;";
-
-			};
-			
-            apiRequest.upload.addEventListener("progress", progressHandler, false);
-            apiRequest.open('POST', '/oneclickUploader/upload_rest_api_edit.php');
-            apiRequest.send(formData);
-			for (var pair of formData.entries()) {
-				console.log(pair[0]+ ' - ' + pair[1].name); 
+	
+				};
+				
+	            apiRequest.upload.addEventListener("progress", progressHandler, false);
+	            apiRequest.open('POST', '/oneclickUploader/upload_rest_api_edit.php');
+	            apiRequest.send(formData);
+				for (var pair of formData.entries()) {
+					console.log(pair[0]+ ' - ' + pair[1].name); 
+				}
 			}
-			}//if file
 			else	{
 				document.getElementById("nofolder").style = "display:block;";
 			}
