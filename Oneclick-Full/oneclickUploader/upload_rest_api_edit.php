@@ -90,7 +90,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $tmpPath = trim($tempPath).$dir_separator.$uploadersession;
     $processPath = $processPath.$dir_separator.$uploadersession;
     //echo("\r\ntemp path = ".$tmpPath." and new path is ".$processPath."\r\n");
-    $currentFiles = count(array_diff(scandir($finalSIPPath), array('.', '..')));
+    //$currentFiles = count(array_diff(scandir($finalSIPPath), array('.', '..')));
+    #echo("Testing");
+    #echo json_encode("Beginning files ".scan_dir($finalSIPPath));
+    $currentFiles = count(scan_dir($finalSIPPath));
+    //echo json_encode("Current files = ".$currentFiles);
     moveToProcess($tmpPath, $processPath);
     //echo($result);
     
@@ -101,14 +105,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      * Use e.g. inotify https://www.php.net/manual/en/intro.inotify.php
      */
         
-    $sleep = 2;
+    $sleep = 3;
     //$totalSleep = 0;
     //echo("Start looping");
     do {
-        //echo("Sleeped ".$totalSleep."\n");
-        sleep($sleep);
-        $totalSleep = $totalSleep+$sleep;
-        $files = array_diff(scandir($finalSIPPath), array('.', '..'));
+        //echo json_encode("Sleeped ".$sleep."\n");
+        sleep($sleep);        
+        $files = scan_dir($finalSIPPath); #Just to test it
+        //$files = array_diff(scandir($finalSIPPath), array('.', '..'));
     }while(count($files)==$currentFiles);
     
     
@@ -119,7 +123,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (count($files)>$currentFiles){
         $sipfileArray = array();
         foreach ($files as $onefile){
-            
+            //echo json_encode($onefile);
             $relative = "http://".$ip.":".$port."/oneclickUploader/zipit/".$uploadersession."/".$onefile;
             
             //$relative = "http://10.25.36.72:8080/oneclickUploader/zipit/".$uploadersession."/".$onefile;
@@ -130,31 +134,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             //Will be replaced with arrayname[indexname] = value
             //array_push($sipfileArray,$relative);
             $sipfileArray[$filetime] = $relative;
-        }
-        
+        }        
         echo json_encode($sipfileArray);
+    }
+    else{
+        return False;
     }
     
     
 }
 
 else {
-    echo "Nothing to do.";
+    echo json_encode( "Nothing to do.");
 }
 
 function scan_dir($dir) {
-    $ignored = array('.', '..', '.svn', '.htaccess');
-    
     $files = array();
-    foreach (scandir($dir) as $file) {
-        if (in_array($file, $ignored)) continue;
-        $files[$file] = filemtime($dir . '/' . $file);
+    $ignored = array('.', '..');
+    $files = array_diff(scandir($dir), $ignored);
+    //$files = array();
+    
+    foreach ($files as $file) {
+        if (file_exists($file)){        
+            $files[$file] = filemtime($dir . '/' . $file);
+        }
     }
     
     arsort($files);
-    $files = array_keys($files);
-    
-    return ($files) ? $files : false;
+    /*
+    try{
+        echo json_encode("Sorted list ".$files);
+    }
+    catch (error){
+        echo json_encode("Cannot count..");        
+    }*/
+        
+   
+   return $files;
+       
 }
 
 

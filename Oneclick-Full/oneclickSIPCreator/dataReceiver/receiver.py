@@ -379,7 +379,7 @@ def handleCreationEvent(event, storage):
                         sorted_dict[k] = mimeTypes[k]
             print("After checks mimetype list = {}".format(sorted_dict))
             rootDC.update({"dc_format":"{}".format(sorted_dict)})
-            rootDC.update({"dc_description":"Contains {} file(s)".format(totalFiles)})
+            rootDC.update({"dc_description":"Contains at least {} file(s)".format(totalFiles)})
             mimeTypes.clear() #just clears the above dict thus not needed anymore
             sorted_dict.clear()
             

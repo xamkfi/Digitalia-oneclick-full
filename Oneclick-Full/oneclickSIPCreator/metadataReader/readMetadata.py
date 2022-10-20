@@ -69,7 +69,7 @@ class readMeta:
         if(len(tempDict)==0):
             print("No metadata found for {}".format(onePath))
         metaDict = {}
-        replaceMimes = ["", "image/x-canon-cr2", "application/vnd.ms-pki.seccat"]
+        replaceMimes = ["", "image/x-canon-cr2", "application/vnd.ms-pki.seccat", None]
         """Replaces all : with _"""
         for key in tempDict:
         #print("repmets for root: {}-->{}".format("repmets_"+key, temprepMETSMeta[key]))        

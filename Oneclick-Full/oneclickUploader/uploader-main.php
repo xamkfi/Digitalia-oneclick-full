@@ -185,23 +185,26 @@ echo $appName." ".$appVersion;
 				apiRequest.onload = function() {				
 					document.getElementById("main-form").reset(); 
 					console.log(this.responseText);
-					
-					var responseJson = JSON.parse(this.responseText);
-					window.selectedFile = null;					
-					
-					document.getElementById("sipfiles-list").innerHTML = ""
-					
-					for (const key in responseJson){
-						console.log(key);
-						if (String(responseJson[key]).includes("INVALID")){
-							console.log("Invalid SIP found");
-							document.getElementById("sipfiles-list").innerHTML += 
-								"<br><a href='"+responseJson[key]+"'>"+key+"_SIP(INVALID-CHECK)</a>";							
+					try{
+						var responseJson = JSON.parse(this.responseText);
+						window.selectedFile = null;					
+						
+						document.getElementById("sipfiles-list").innerHTML = ""
+						
+						for (const key in responseJson){
+							console.log(key);
+							if (String(responseJson[key]).includes("INVALID")){
+								console.log("Invalid SIP found");
+								document.getElementById("sipfiles-list").innerHTML += 
+									"<br><a href='"+responseJson[key]+"'>"+key+"_SIP(INVALID-CHECK)</a>";							
+							}
+							else{
+								document.getElementById("sipfiles-list").innerHTML += 
+									"<br><a href='"+responseJson[key]+"'>"+key+"_SIP</a>";
+							}
 						}
-						else{
-							document.getElementById("sipfiles-list").innerHTML += 
-								"<br><a href='"+responseJson[key]+"'>"+key+"_SIP</a>";
-						}
+					}catch(error){
+						console.log("Error causing thing = \n"+this.responseText);
 					}
 					
 				
