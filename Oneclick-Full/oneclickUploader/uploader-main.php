@@ -184,7 +184,7 @@ echo $appName." ".$appVersion;
 	            var apiRequest = new XMLHttpRequest();			
 				apiRequest.onload = function() {				
 					document.getElementById("main-form").reset(); 
-					console.log(this.responseText);
+					//console.log(this.responseText);
 					try{
 						var responseJson = JSON.parse(this.responseText);
 						window.selectedFile = null;					
@@ -192,9 +192,9 @@ echo $appName." ".$appVersion;
 						document.getElementById("sipfiles-list").innerHTML = ""
 						
 						for (const key in responseJson){
-							console.log(key);
+							//console.log(key);
 							if (String(responseJson[key]).includes("INVALID")){
-								console.log("Invalid SIP found");
+								console.log("Invalid SIP found, double the package validation report inside the package");
 								document.getElementById("sipfiles-list").innerHTML += 
 									"<br><a href='"+responseJson[key]+"'>"+key+"_SIP(INVALID-CHECK)</a>";							
 							}
@@ -219,7 +219,7 @@ echo $appName." ".$appVersion;
 	            apiRequest.open('POST', '/oneclickUploader/upload_rest_api_edit.php');
 	            apiRequest.send(formData);
 				for (var pair of formData.entries()) {
-					console.log(pair[0]+ ' - ' + pair[1].name); 
+					console.log("Uploaded: "+ pair[1].name); 
 				}
 			}
 			else	{
@@ -235,7 +235,7 @@ echo $appName." ".$appVersion;
 			if(percentUploaded < 100){
 			
 				document.getElementById("progress-bar").className = "progress-bar progress-bar-striped";
-				document.getElementById("progress_status").innerHTML = "Uploading files. Time to get a cup of coffee and relax.";
+				document.getElementById("progress_status").innerHTML = "Uploading files..";
 				document.getElementById("upload_file_button").disabled = true;
 			
 			}else			{
@@ -243,6 +243,7 @@ echo $appName." ".$appVersion;
 				//document.getElementById("progress_status").innerHTML = Math.round(percentUploaded) + "% uploaded";
 				document.getElementById("progress-bar").className = "progress-bar progress-bar-striped";
 				document.getElementById("upload_file_button").disabled = false;
+				document.getElementById("progress_status").innerHTML = "Uploading complete, processing..";
 				
 				}
         }

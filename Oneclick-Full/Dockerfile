@@ -1,8 +1,8 @@
-#FROM continuumio/miniconda3
+#FROM continuumio/miniconda3 #Was tried as a ligher alternative but caused some problems
 FROM continuumio/anaconda3
 
-#Expose ports
-#EXPOSE 3000
+#Expose ports 
+#EXPOSE 8080 #does not seem affect, exposing done on startup
 
 WORKDIR /app/oneclickSIPCreator
 #Basic update for the system
@@ -22,14 +22,11 @@ RUN apt-get install -y --fix-missing exiftool php8.1 apache2 clamav clamav-daemo
 COPY docker-apache.conf /etc/apache2/conf-enabled/docker-apache.conf
 COPY ports.conf /etc/apache2/ports.conf
 
-#Installs nano for development purposes, will be removed on final release
-RUN apt-get install nano
+#Installs nano for development purposes, will be commented on final release
+#RUN apt-get install nano
 
-#Exposes the basic ports
-#EXPOSE 80
-
-#UPdates clamav disabled for development
-#RUN freshclam
+#Updates clamav disabled for development thus multiple updates during one day causes temporary ban
+RUN freshclam
 
 #Updates conda environment and adds needed libraries
 RUN conda update --all
@@ -42,20 +39,16 @@ COPY phpinfo.php /var/www/html
 COPY uploads.ini /etc/php/8.1/apache2/conf.d
 COPY oneclickUploader /var/www/html/oneclickUploader
 COPY ./oneclickSIPCreator/config.ini /var/www/html/oneclickUploader
+
 #Needed to be able to move the uploaded files to a uploads folder
 RUN chown -R www-data:www-data /var/www/html/oneclickUploader
 RUN service apache2 restart
-
 
 COPY ./oneclickSIPCreator /app/oneclickSIPCreator/.
 
 #Runs apache and python background
 #CMD apachectl -D FOREGROUND 
 #CMD ["python", "-u", "/app/oneclickSIPCreator/mainapp.py"]
-#CMD apachectl -D FOREGROUND
 
 COPY startup-script.sh /app/oneclickSIPCreator/startup-script.sh
-#CMD ["python", "/app/oneclickSIPCreator/mainapp.py"]
 ENTRYPOINT ["bash","/app/oneclickSIPCreator/startup-script.sh"]
-#CMD ["bash", "startup-script.sh"] 
-#siksi skripti jossa on kaksi käynnistyskomentoa

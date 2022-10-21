@@ -92,9 +92,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //echo("\r\ntemp path = ".$tmpPath." and new path is ".$processPath."\r\n");
     //$currentFiles = count(array_diff(scandir($finalSIPPath), array('.', '..')));
     #echo("Testing");
-    #echo json_encode("Beginning files ".scan_dir($finalSIPPath));
-    $currentFiles = count(scan_dir($finalSIPPath));
-    //echo json_encode("Current files = ".$currentFiles);
+    #echo("Beginning files ".glob($finalSIPPath));
+    $currentFiles = count(glob($finalSIPPath."/*.zip")); #Just finds the zip files - final format of SIPs
+    #echo json_encode("Current files = ".$currentFiles." ".glob($finalSIPPath));
     moveToProcess($tmpPath, $processPath);
     //echo($result);
     
@@ -105,36 +105,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      * Use e.g. inotify https://www.php.net/manual/en/intro.inotify.php
      */
         
-    $sleep = 3;
+    $sleep = 5;
     //$totalSleep = 0;
     //echo("Start looping");
+    
     do {
         //echo json_encode("Sleeped ".$sleep."\n");
         sleep($sleep);        
-        $files = scan_dir($finalSIPPath); #Just to test it
-        //$files = array_diff(scandir($finalSIPPath), array('.', '..'));
+        $tempfiles = scandir($finalSIPPath); #Find the created zip files
+        $files = array();
+        foreach ($tempfiles as $onefile){
+            if (str_ends_with($onefile, ".zip")){
+                #echo("Found file with zip ending ".$onefile);
+                array_push($files, $onefile);
+            }
+        }
+        #echo("Found files ".$files);
+        #echo("current vs. previous ".count($files)."vs".$currentFiles."\n");
+        //$files = array_diff(glob($finalSIPPath), array('.', '..'));
     }while(count($files)==$currentFiles);
     
     
-    //echo("Files in completed dir = ".count($files));
+    #echo("Files in completed dir = ".count($files));
     //echo($_SERVER['DOCUMENT_ROOT']);
     
     
     if (count($files)>$currentFiles){
+        #echo("More than starting files found");
         $sipfileArray = array();
         foreach ($files as $onefile){
-            //echo json_encode($onefile);
-            $relative = "http://".$ip.":".$port."/oneclickUploader/zipit/".$uploadersession."/".$onefile;
-            
-            //$relative = "http://10.25.36.72:8080/oneclickUploader/zipit/".$uploadersession."/".$onefile;
-            $absolute = $finalSIPPath."/".$onefile;
-            //echo("Relative path = ".$relative);
-            $filetime = date("Y-m-d H:i:s", filectime($absolute));
-            
-            //Will be replaced with arrayname[indexname] = value
-            //array_push($sipfileArray,$relative);
-            $sipfileArray[$filetime] = $relative;
+            if (file_exists($finalSIPPath.$dir_separator.$onefile)){
+                #echo json_encode("Found ".$onefile);
+                $relative = "http://".$ip.":".$port."/oneclickUploader/zipit/".$uploadersession."/".$onefile;
+                
+                //$relative = "http://10.25.36.72:8080/oneclickUploader/zipit/".$uploadersession."/".$onefile;
+                $absolute = $finalSIPPath."/".$onefile;
+                //echo("Relative path = ".$relative);
+                $filetime = date("Y-m-d H:i:s", filectime($absolute));
+                
+                //Will be replaced with arrayname[indexname] = value
+                //array_push($sipfileArray,$relative);
+                $sipfileArray[$filetime] = $relative;
+            }
         }        
+        krsort($sipfileArray);
         echo json_encode($sipfileArray);
     }
     else{
@@ -148,31 +162,6 @@ else {
     echo json_encode( "Nothing to do.");
 }
 
-function scan_dir($dir) {
-    $files = array();
-    $ignored = array('.', '..');
-    $files = array_diff(scandir($dir), $ignored);
-    //$files = array();
-    
-    foreach ($files as $file) {
-        if (file_exists($file)){        
-            $files[$file] = filemtime($dir . '/' . $file);
-        }
-    }
-    
-    arsort($files);
-    /*
-    try{
-        echo json_encode("Sorted list ".$files);
-    }
-    catch (error){
-        echo json_encode("Cannot count..");        
-    }*/
-        
-   
-   return $files;
-       
-}
 
 
 function moveToProcess($originalPath, $processPath){
