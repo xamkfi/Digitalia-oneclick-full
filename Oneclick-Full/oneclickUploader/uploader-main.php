@@ -35,7 +35,10 @@ echo $appName." ".$appVersion;
 <body>
 <nav class="navbar navbar-expand-sm navbar-dark" style="background:#b9b0b0;">
 <!-- Brand/logo -->
-  <a class="navbar-brand" href="#">Oneclick eArchiving</a>
+  <a class="navbar-brand" href="#">
+    <img src="images/en_square_cef_logo.png" alt="eu-logo" style="width:80px;">
+    OneClick eArchive - SIP creator
+  </a>
   
 </nav>
 <div class="container p-3 my-3 text-white" style="background:#e4d1d1;">
