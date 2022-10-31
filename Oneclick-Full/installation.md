@@ -4,6 +4,7 @@ These instructions are created for, and tested on Ubuntu 20.04 server. Other Ubu
 ## prequisites
 - Installed Ubuntu server 20.04 with cli / ssh access
 - Installed Docker (developed on 20.10.18)
+    - [Installing Docker on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
 
 ## Installation procedure
 1. Clone the repository https://gitlab.com/jaaskela79/oneclick-full
@@ -27,4 +28,4 @@ These instructions are created for, and tested on Ubuntu 20.04 server. Other Ubu
 - Check that the docker is actually running, output should be something similar to: *b1e03a8739a4   oneclick   "bash /app/oneclickS…"   59 minutes ago   Up 59 minutes   0.0.0.0:8080->8080/tcp, :::8080->8080/tcp   boring_chandrasekhar*
 
 5. When the docker is up and running, fire up your browser and enter http://yourip:yourport/oneclickUploader/uploader-main.php 
-    - in my development machine the full path is http://10.25.36.72:8080/oneclickUploader/uploader-main.php
+    - in my development machine the full path is http://10.25.36.72:8080/oneclickUploader/uploader-main.php which obviously doesn't work for you thus being developed inside a vpn network
