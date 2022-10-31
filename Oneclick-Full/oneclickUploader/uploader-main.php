@@ -37,7 +37,7 @@ echo $appName." ".$appVersion;
 <!-- Brand/logo -->
   <a class="navbar-brand" href="#">
     <img src="images/en_square_cef_logo.png" alt="eu-logo" style="width:80px;">
-    OneClick eArchive - SIP creator
+    OneClick eArchiving - SIP creator
   </a>
   
 </nav>
@@ -219,7 +219,7 @@ echo $appName." ".$appVersion;
 				};
 				
 	            apiRequest.upload.addEventListener("progress", progressHandler, false);
-	            apiRequest.open('POST', '/oneclickUploader/upload_rest_api_edit.php');
+	            apiRequest.open('POST', '/oneclickUploader/upload_rest_api.php');
 	            apiRequest.send(formData);
 				for (var pair of formData.entries()) {
 					console.log("Uploaded: "+ pair[1].name); 
