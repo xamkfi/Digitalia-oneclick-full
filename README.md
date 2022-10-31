@@ -1,6 +1,6 @@
 ## Oneclick-Full
 
-Combines oneclick extractor and php uploader into a dockerized solutoin
+Combines oneclick extractor and php uploader into a dockerized solution
 
 ## Description
 This simple to use online tool created E-ARK conformant SIP packages. Just drag and drop files / folder to the webUI and wait for the SIP package to appear
