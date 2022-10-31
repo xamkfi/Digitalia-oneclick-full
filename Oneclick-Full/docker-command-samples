@@ -16,7 +16,7 @@ docker exec -ti sharp_snyder bash
 Stop goofy_ptolemy 
 docker stop goofy_ptolemy 
 
-Clean up overlay2 folder, so free up unused space
+Clean up overlay2 folder, so frees up unused space
 docker system prune -a -f
 
 Views the logs of elegant_bassi
