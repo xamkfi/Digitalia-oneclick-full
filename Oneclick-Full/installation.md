@@ -35,4 +35,4 @@ These instructions are created for, and tested on Ubuntu 20.04 server. Other Ubu
 
 5. When the docker is up and running, fire up your browser and enter http://yourip:yourport/oneclickUploader/uploader-main.php 
     - in my development machine the full path is http://10.25.36.72:8080/oneclickUploader/uploader-main.php which obviously doesn't work for you thus being developed inside a vpn network
-6. Upload things to be added into a SIP package. For more information related to this, see the tutorial video
+6. Upload things to be added into a SIP package. For more information related to this, see the tutorial video https://youtu.be/Vns-GwuyfWI
