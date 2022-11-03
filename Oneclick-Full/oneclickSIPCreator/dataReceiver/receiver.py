@@ -340,11 +340,14 @@ def handleCreationEvent(event, storage):
             metaFiles = payloadAndMetaPaths[1] #This contains just the paths to original metadatafiles
             if len(metaFiles)>0:
                 allFiles = allFiles+metaFiles #Add metadatafiles to allfiles to ensure those appear in repmets file
+                """
                 for onemetafile in metaFiles:
                     extraDCData = parseXMLData(onemetafile)
+                    print("Extra meta\n {}\n".format(extraDCData))
                     #Tries to identify the language of the metadatafile                    
-                    rootDC.update({"dc_language":"{}".format(detect(extraDCData))})
+                    #rootDC.update({"dc_language":"{}".format(detect(extraDCData))})
                     rootDC.update({"dc_additional":"{}".format(extraDCData)})
+                """
         #print("All found files {}".format(allFiles))
         if(len(allFiles)==0):
             print("No files to process, quitting")
@@ -496,19 +499,24 @@ def handleCreationEvent(event, storage):
             return
 
 
-def getDirectoryContent(pathname, repOrgMetaPath, storage):
+def getDirectoryContent(pathname, repOrgMetaPath, mystorage):
     print("Browsing content of dir {}".format(pathname))
     payloadFilePaths = []    
     orgMetadataFilePaths = []
-    definedMetaFiles = storage.getConfigItem("metadata").split(';')
+    tempMeta = mystorage.getConfigItem("metadata").replace(" ","")
+    
+    definedMetaFiles = tempMeta.split(';')
     print("Config.ini file defined {} file(s), check if those exists and find metadata".format(definedMetaFiles))
     
-    pathcontent = os.scandir(pathname) #Only seeks metadata files within the first folder
-    for entry in pathcontent: #Takes care of moving eka digiteek original metadata files
-        if entry.is_file():
-            if entry.name in definedMetaFiles: #Adds config.ini defined file(s) to org metadatalist
-                print("{} file found withing the root folder, read metadata".format(entry.name))
-                newPath = moveFilesToNewDir(os.path.join(pathname, entry.name), repOrgMetaPath)
+    #print("Finding metafiles from {}".format(pathname))
+    #pathcontent = os.scandir(pathname) #Only seeks metadata files within the first folder    
+    for root, dirs, files in os.walk(pathname):
+    #for entry in pathcontent: #Takes care of moving eka digiteek original metadata files
+        for file in files:        
+            #print("one entry {}".format(file))
+            if file in definedMetaFiles: #Adds config.ini defined file(s) to org metadatalist
+                print("{} metadata file found withing the uploaded content".format(os.path.join(root, file)))
+                newPath = moveFilesToNewDir(os.path.join(root, file), repOrgMetaPath)
                 orgMetadataFilePaths.append(newPath)
                 
             #Then check is similarly named folder exists inside the same path
