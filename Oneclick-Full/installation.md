@@ -18,9 +18,10 @@ These instructions are created for, and tested on Ubuntu 20.04 server. Other Ubu
 4. Open the uploads.ini file and modify if needed. This can be used to change the upload limitis and execution times. Also any other container php settings can be altered via this file. You just have to know what to add.
 4. Run the following commands inside Oneclick-Full directory
 
-`docker build -t oneclick .` 
+`docker build --no-cache -t oneclick .` 
 - Builds and names the resulting container as oneclick
 - Note that the first build takes minutes to complete
+- The first build might fail if run without --no-cache tag (at least failed on server that already had other docker things)
     
 `docker run -v /etc/localtime:/etc/localtime:ro -h somename.somedomain.net -d -p 8080:8080 oneclick` 
 - Runs the compiled oneclick container 
