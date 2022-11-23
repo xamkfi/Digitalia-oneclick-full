@@ -3,7 +3,7 @@ These instructions are created for, and tested on Ubuntu 20.04 server. Other Ubu
 
 ## prequisites
 - Installed Ubuntu server 20.04 with cli / ssh access
-- Installed Docker (developed on 20.10.18)
+- Installed Docker (developed on 20.10.18 and tested on 20.10.21)
     - [Installing Docker on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
 
 ## Installation procedure
