@@ -4,7 +4,7 @@ docker build -t oneclick . #--no-cache option builds all again
 Run and expose port 80: 
 docker run -d -p 80:80 oneclick
 
-Run, expose port 80 and sync time with the host
+Run, expose port 8080 and sync time with the host
 docker run -v /etc/localtime:/etc/localtime:ro -h sipcreator.sampledomain.fi -d -p 8080:8080 oneclick
 
 Shows the currently active docker processes: 
