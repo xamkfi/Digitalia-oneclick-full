@@ -37,7 +37,7 @@ echo $appName." ".$appVersion;
 <!-- Brand/logo -->
   <a class="navbar-brand" href="#">
     <img src="images/en_square_cef_logo.png" alt="eu-logo" style="width:80px;">
-    OneClick eArchiving - SIP creator
+    OneClick eArchiving - SIP creator - Demo version
   </a>
   
 </nav>
@@ -118,7 +118,7 @@ echo $appName." ".$appVersion;
       </div>
       <div id="collapseOne" class="collapse" data-parent="#accordion">
 		 <div class="card-body">
-			<b>Please note that this list will be reset when you close the browser.</b>
+			<b>Please note that this list will be reset when you refresh or close the browser.</b>
           <div id="sipfiles-list">
 		  </div>
         </div>

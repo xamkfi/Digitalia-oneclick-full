@@ -1,0 +1,9 @@
+T
+
+Prequisites
+-Installed Ubuntu server 20.04 and cli / shh access to it
+-Docker installed (Development machines has version 20.10.18). Docker-compose not needed
+
+1. Clone repository from https://gitlab.com/jaaskela79/oneclick-full by any available method
+2. Run commands inside Oneclick-Full directory
+* docker build -t oneclick .

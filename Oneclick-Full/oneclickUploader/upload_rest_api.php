@@ -28,7 +28,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $sip_path = trim($pieces[1]);
             
         }
-        if(str_starts_with($line, "ip"))	{
+		if(str_starts_with($line, "domain"))	{
+            $pieces = explode("=", $line);
+            $domain = trim($pieces[1]);
+            //echo ($ip);
+        }        
+
+		if(str_starts_with($line, "ip"))	{
             $pieces = explode("=", $line);
             $ip = trim($pieces[1]);
             //echo ($ip);
@@ -136,7 +142,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         foreach ($files as $onefile){
             if (file_exists($finalSIPPath.$dir_separator.$onefile)){
                 #echo json_encode("Found ".$onefile);
-                $relative = "http://".$ip.":".$port."/oneclickUploader/zipit/".$uploadersession."/".$onefile;
+                if (isset($domain)){
+					$relative = $domain."/oneclickUploader/zipit/".$uploadersession."/".$onefile;
+				}
+				else{				
+					$relative = "http://".$ip.":".$port."/oneclickUploader/zipit/".$uploadersession."/".$onefile;
+				}
                 
                 //$relative = "http://10.25.36.72:8080/oneclickUploader/zipit/".$uploadersession."/".$onefile;
                 $absolute = $finalSIPPath."/".$onefile;

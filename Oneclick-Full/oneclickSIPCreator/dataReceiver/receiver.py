@@ -39,7 +39,7 @@ deletePath = False
 includeSchemas = False
 
 #runtimeDir = "notdefined"
-csversion = "2.2.1"
+csversion = "2.3.0"
 
 """
 Creates the basic SIP folder structure, metadata, representations, datauuid and data folder
