@@ -42,7 +42,7 @@ echo $appName." ".$appVersion;
   
 </nav>
 <div class="container p-3 my-3 text-white" style="background:#e4d1d1;">
-
+<li><a href="https://gitlab.com/jaaskela79/oneclick-full" target="_blank">Check info and tutorials from Gitlab</a></li>
 <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
