@@ -94,6 +94,9 @@ echo $appName." ".$appVersion;
  <div class="progress" style="height:30px">
   <div id="progress-bar" class="progress-bar bg-light" style="height:30px;color:black;width:100%;">No uploads in progress</div>
 </div>
+	<button id="processing-icon" class="btn btn-success" disabled style="display:none;">      
+		<span class="spinner-grow spinner-grow-sm"></span>          Processing..    
+	</button>
 </div>
 </div> 
 
@@ -215,12 +218,14 @@ echo $appName." ".$appVersion;
 					//	document.getElementById("sipfiles-list").innerHTML += "<div><a href='"+responseJson.files.allfiles[index]+"'>"+responseJson.files.allfiles[index]+"</a></div>";
 					//}
 					document.getElementById('filesselected').style = "display:none;";
+					document.getElementById("processing-icon").style = "display:none;";
 	
 				};
 				
 	            apiRequest.upload.addEventListener("progress", progressHandler, false);
 	            apiRequest.open('POST', '/oneclickUploader/upload_rest_api.php');
 	            apiRequest.send(formData);
+	            document.getElementById("processing-icon").style = "display:block;";
 				for (var pair of formData.entries()) {
 					console.log("Uploaded: "+ pair[1].name); 
 				}
@@ -232,7 +237,7 @@ echo $appName." ".$appVersion;
 
         function progressHandler(event) {
             var percentUploaded = (event.loaded / event.total) * 100;
-            //document.getElementById("progress_bar").value = Math.round(percentUploaded);
+            //("progress_bar").value = Math.round(percentUploaded);
 			document.getElementById("progress-bar").style = "width:"+Math.round(percentUploaded)+"%;";
 			document.getElementById("progress-bar").innerHTML = Math.round(percentUploaded) + "% uploaded";
 			if(percentUploaded < 100){
