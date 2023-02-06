@@ -7,7 +7,7 @@ This simple to use online tool creates E-ARK conformant SIP packages. Just drag 
 
 ## Installation
 installation instructions:
-- <https://gitlab.com/jaaskela79/oneclick-full/-/blob/main/Oneclick-Full/installation.md>
+- <https://github.com/xamkfi/Digitalia-oneclick-full/blob/main/Oneclick-Full/installation.md>
 
 video tutorial: 
 - https://youtu.be/cKDNc0p66s4
